@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+
+  mongodb:
+    image: bitnami/mongodb
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+        ALLOW_EMPTY_PASSWORD: "yes"
+    volumes: 
+        - 'mongodb_data:/bitnami/mongodb'
+    ports:
+      - 27017:27017
+
+volumes: 
+    mongodb_data:
