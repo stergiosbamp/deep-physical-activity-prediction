@@ -15,4 +15,12 @@ class Database:
 
     @staticmethod
     def insert_to_collection(collection: Collection, docs):
-        collection.insert_many(docs)
+        if type(docs) is list:
+            collection.insert_many(docs)
+        else:
+            collection.insert_one(docs)
+
+    def get_all_docs(self, collection: Collection):
+        cursor_result = self.database.get_collection(collection).find()
+        docs = list(cursor_result)
+        return docs
