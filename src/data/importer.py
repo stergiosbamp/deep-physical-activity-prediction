@@ -72,66 +72,55 @@ class Importer:
                 failed_ids.append((index, str(e)))
         return failed_ids
 
-    def merge_original_and_embedded(self, original_coll_name, embedded_coll_name, new_coll_name):
-        original_coll = self.database.get_or_create_collection(original_coll_name)
-        embedded_coll = self.database.get_or_create_collection(embedded_coll_name)
+    def merge_original_and_embedded_data(self, new_coll_name, activity_to_keep='HKQuantityTypeIdentifierStepCount'):
         new_coll = self.database.get_or_create_collection(new_coll_name)
 
-        # Fetch all distinct users we have in the dataset
-        users = original_coll.distinct('healthCode')
+        hk_data = pd.read_csv('../../data/healthkit_data.csv', index_col=0)
+        hk_data = hk_data.reset_index(drop=True)
+        file_ids = pd.read_csv('../../data/file_handles_healthkit_data.csv',
+                               header=0,
+                               names=['data_id', 'cache_filepath'])
 
-        for user in tqdm(users):
-            print("Processing user:", user)
-            user_docs = original_coll.find({'healthCode': user})
-            user_data_ids = []
+        # Get all users that we have in the Healthkit data dataset
+        all_users = hk_data['healthCode'].unique()
 
-            final_doc = {}
-            i = 0
-            # Find all data_ids for the current user
-            for user_doc in user_docs:
-                # Do this only one time to get the user's elements
-                if i == 0:
-                    # 'createOn' field is on Unix epoch
-                    user_doc['createdOn'] = datetime.fromtimestamp(user_doc['createdOn']/1000)
-                    # Copy to final doc the original doc
-                    final_doc = user_doc.copy()
-                    i += 1
-                data_id = user_doc['data_id']
-                user_data_ids.append(data_id)
+        for user in tqdm(all_users):
 
-            # Find all docs that have any of those user data ids. Some do not belong in the stepsCount activity.
-            # So we filter those with the $in operator of mongo.
-            # We could instead iterate those user data ids and query them one by one, but it's really
-            # time-consuming. Mongo handles that much better.
+            # For the current user find all his data ids that have embedded records.
+            # We join based on data_id in the file handles df.
+            user_df = hk_data[hk_data['healthCode'] == user]
+            df_merged = user_df.merge(right=file_ids, how='inner')
 
-            data_id_docs_cursor = embedded_coll.find({"data_id": {"$in": user_data_ids}})
+            # 'createOn' field is on Unix epoch so convert it to datetime
+            df_merged['createdOn'] = df_merged['createdOn'].apply(lambda x: datetime.fromtimestamp(x / 1000))
 
-            for data_id_doc in data_id_docs_cursor:
-                data_id_doc['startTime'] = parser.parse(data_id_doc['startTime'])
-                data_id_doc['endTime'] = parser.parse(data_id_doc['endTime'])
+            for index, row in df_merged.iterrows():
+                cache_file = row['cache_filepath']
 
-                # Copy to final doc the embedded doc
-                for k, v in data_id_doc.items():
-                    final_doc[k] = v
+                try:
+                    embedded_df = pd.read_csv(cache_file, parse_dates=True)
+                except Exception as e:
+                    print("Exception raised. Corrupted file:", str(e))
+                    continue
 
-                # drop data_id field
-                final_doc.pop('data_id')
-                self.database.insert_to_collection(new_coll, final_doc)
+                # Keep only steps count activity
+                embedded_df = embedded_df[embedded_df['type'] == activity_to_keep]
 
-    def keep_stepcount_data_only(self):
-        coll = self.database.get_or_create_collection("healthkit_data_embedded")
-        step_count_records = coll.find({"type": "HKQuantityTypeIdentifierStepCount"})
+                # Check if current cache file contains any steps count activity
+                if embedded_df.empty:
+                    continue
+                else:
+                    # Populate with user's info the data and insert
+                    for index, value in row.iteritems():
+                        embedded_df[index] = value
 
-        step_collection = self.database.get_or_create_collection("HK_embedded_stepcount")
+                    # Drop unnecessary columns before insert to mongo
+                    embedded_df.drop(['data_id', 'cache_filepath'], axis=1, inplace=True)
 
-        for record in step_count_records:
-            self.database.insert_to_collection(step_collection, record)
+                    final_docs = embedded_df.to_dict(orient='records')
+                    self.database.insert_to_collection(new_coll, final_docs)
 
 
 if __name__ == '__main__':
     importer = Importer()
-    # Significantly reduces the relevant documents that we need before merging
-    # importer.keep_stepcount_data_only()
-    importer.merge_original_and_embedded(original_coll_name='healthkit_data',
-                                         embedded_coll_name='HK_embedded_stepcount',
-                                         new_coll_name='hk_stepscount_singles')
+    importer.merge_original_and_embedded_data('healthkit_stepscount_singles')

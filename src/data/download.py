@@ -17,6 +17,10 @@ class Downloader:
     def download_synapse_table_as_csv(self, table_name, entity_id):
         entity = self.syn.tableQuery("SELECT * FROM {}".format(entity_id))
         df = entity.asDataFrame()
+
+        # Rename 'data.csv' to 'data_id' for mongoDB reasons
+        df = df.rename(columns={"data.csv": "data_id"})
+
         df.to_csv("../../data/{}.csv".format(table_name))
         return df
 
