@@ -98,7 +98,7 @@ class Importer:
                 cache_file = row['cache_filepath']
 
                 try:
-                    embedded_df = pd.read_csv(cache_file, parse_dates=True)
+                    embedded_df = pd.read_csv(cache_file, parse_dates=['startTime', 'endTime'], infer_datetime_format=True)
                 except Exception as e:
                     print("Exception raised. Corrupted file:", str(e))
                     continue
