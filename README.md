@@ -41,7 +41,8 @@ $ docker-compose up -d
 * Exec inside container as root
 `docker exec -it --user root mongodb bash`
 * Create directory with `$ mkdir /dump/`
-* Dump the collection `$ mongodump --db=deep_physical_activity_prediction_db --collection=healthkit_stepscount_singles`
+* Dump the collection with compressed mode to reduce the size 
+`$ mongodump --gzip --db=deep_physical_activity_prediction_db --collection=healthkit_stepscount_singles`
 * Exit container `$ exit`
 
 Copy from inside the container the binary files to the computer
