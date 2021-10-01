@@ -1,7 +1,7 @@
 import pandas as pd
+import numpy as np
 
 from database import Database
-from dateutil import parser
 from datetime import datetime
 from tqdm import tqdm
 
@@ -98,13 +98,20 @@ class Importer:
                 cache_file = row['cache_filepath']
 
                 try:
-                    embedded_df = pd.read_csv(cache_file, parse_dates=['startTime', 'endTime'], infer_datetime_format=True)
+                    embedded_df = pd.read_csv(cache_file)
                 except Exception as e:
                     print("Exception raised. Corrupted file:", str(e))
                     continue
 
                 # Keep only steps count activity
                 embedded_df = embedded_df[embedded_df['type'] == activity_to_keep]
+
+                # Convert to datetime objects to UTC only
+                embedded_df['startTime'] = pd.to_datetime(embedded_df['startTime'], errors='coerce', utc=True)
+                embedded_df['endTime'] = pd.to_datetime(embedded_df['endTime'], errors='coerce', utc=True)
+
+                # Replace NaT with None for MongoDB
+                embedded_df.replace({pd.NaT: None}, inplace=True)
 
                 # Check if current cache file contains any steps count activity
                 if embedded_df.empty:
