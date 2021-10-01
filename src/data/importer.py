@@ -99,6 +99,11 @@ class Importer:
 
                 try:
                     embedded_df = pd.read_csv(cache_file)
+                except UnicodeDecodeError as e:
+                    # There are two "corrupted" files from the whole Healthkit data  that
+                    # need to be opened with Unicode encoding instead of utf-8
+                    print("Opening file with unicode encoding: {} ".format(cache_file))
+                    embedded_df = pd.read_csv(cache_file, encoding='unicode_escape')
                 except Exception as e:
                     print("Exception raised. Corrupted file:", str(e))
                     continue
