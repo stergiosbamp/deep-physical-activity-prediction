@@ -1,3 +1,7 @@
+# Data folder
+data/*.csv
+data/*.pkl
+
 # IDE configs
 .idea/
 .vscode/
