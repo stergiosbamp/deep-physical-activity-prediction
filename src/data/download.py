@@ -14,14 +14,13 @@ class Downloader:
         self.syn = synapseclient.Synapse()
         self.syn.login(user, password)
 
-    def download_synapse_table_as_csv(self, table_name, entity_id):
+    def download_synapse_table_as_csv(self, entity_id):
         entity = self.syn.tableQuery("SELECT * FROM {}".format(entity_id))
         df = entity.asDataFrame()
 
-        # Rename 'data.csv' to 'data_id' for mongoDB reasons
+        # Rename 'data.csv' to 'data_id' for MongoDB reasons since it can't handle
+        # keys with . (dot)
         df = df.rename(columns={"data.csv": "data_id"})
-
-        df.to_csv("../../data/{}.csv".format(table_name))
         return df
 
     def download_embedded_data_files(self, embedded_column, entity_id):
@@ -53,9 +52,12 @@ if __name__ == '__main__':
 
     # Download original tables
     for table, entity_id in SYNAPSE_TABLES.items():
-        df = downloader.download_synapse_table_as_csv(table, entity_id)
+        df = downloader.download_synapse_table_as_csv(entity_id)
 
-        # Import them to Mongo
+        # Save it as csv
+        df.to_csv("../../data/{}.csv".format(table))
+
+        # And import them to Mongo
         importer.import_syn_table(dataframe=df, collection_name=table)
 
     # Download embedded data
@@ -64,11 +66,11 @@ if __name__ == '__main__':
 
         file_handles = downloader.download_embedded_data_files(embedded_column=column, entity_id=entity_id)
 
-        # Write the file handle ids in a file for consistency
+        # Save the file handle ids as csv
         df_files = pd.DataFrame.from_dict(file_handles, orient='index')
         df_files.to_csv('../../data/file_handles_{}.csv'.format(table_name))
 
-        # Import each file from the handle ids file with '_embedded' collection name
+        # And import each file from the handle ids file with '_embedded' collection name
         failed_ids = importer.import_embedded_data(dataframe=df_files, collection_name=table_name + "_embedded")
 
         # Write in a pickle how many files are corrupted from all the embedded csv
