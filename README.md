@@ -48,6 +48,34 @@ $ docker-compose up -d
 Copy from inside the container the binary files to the computer
 `$ docker cp  mongodb:/dump/deep_physical_activity_prediction_db/ .`
 
+**Import collection into a new database from backup**
+* Spin up a new database with the following `docker-compose.yml` file
+``` 
+version: '3.1'
+
+services:
+
+  mongodb:
+    image: bitnami/mongodb
+    container_name: mongodb-backup
+    environment:
+        ALLOW_EMPTY_PASSWORD: "yes"
+    volumes: 
+        - 'mongodb_data_backup:/bitnami/mongodb'
+    ports:
+      - 27018:27017
+
+volumes: 
+    mongodb_data_backup:
+```
+
+* Make a directory `/dump/` inside with `docker exec -it --user root mongodb-backup mkdir /dump/`
+* Copy inside the container the above dumped file with `docker cp deep_physical_activity_prediction_db/ mongodb-backup:/dump/`
+* Go inside container `docker exec -it --user root mongodb-backup bash`
+* Restore it with
+`
+$ mongorestore --gzip /dump/
+`
 
 ## Download the data from Synapse and import files to the database
 
