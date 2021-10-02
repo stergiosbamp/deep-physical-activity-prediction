@@ -20,9 +20,6 @@ class Importer:
             collection_name: The collection name of MongoDB to be saved
         """
 
-        # Rename field "data.csv" to "data_id" since MongoDB has issues with dot in keys.
-        dataframe = dataframe.rename(columns={"data.csv": "data_id"})
-
         docs = dataframe.to_dict(orient='records')
 
         collection = self.database.get_or_create_collection(collection_name)
@@ -72,18 +69,33 @@ class Importer:
                 failed_ids.append((index, str(e)))
         return failed_ids
 
-    def merge_original_and_embedded_data(self, new_coll_name, activity_to_keep='HKQuantityTypeIdentifierStepCount'):
-        new_coll = self.database.get_or_create_collection(new_coll_name)
+    def merge_original_and_embedded_data(self, original_file, embedded_file, collection_name, activity_to_keep='HKQuantityTypeIdentifierStepCount'):
+        """
+        Function that joins original and embedded files and imports them into Mongo flattened.
 
-        hk_data = pd.read_csv('../../data/healthkit_data.csv', index_col=0)
+        Args:
+            original_file: The csv file of the original table data
+            embedded_file: The csv file of with the embedded data
+            collection_name: The collection name to save the merged results
+            activity_to_keep: What activity to filter out from the availables of the Apple's Healthkit
+
+        Returns:
+            A list with tuples that weren't successfully imported into database.
+            Format is:
+                (embedded_file_path, reason)
+        """
+
+        collection = self.database.get_or_create_collection(collection_name)
+
+        hk_data = pd.read_csv(original_file, index_col=0)
         hk_data = hk_data.reset_index(drop=True)
-        file_ids = pd.read_csv('../../data/file_handles_healthkit_data.csv',
-                               header=0,
-                               names=['data_id', 'cache_filepath'])
+
+        file_ids = pd.read_csv(embedded_file, header=0, names=['data_id', 'cache_filepath'])
 
         # Get all users that we have in the Healthkit data dataset
         all_users = hk_data['healthCode'].unique()
 
+        failed_files = []
         for user in tqdm(all_users):
 
             # For the current user find all his data ids that have embedded records.
@@ -106,6 +118,7 @@ class Importer:
                     embedded_df = pd.read_csv(cache_file, encoding='unicode_escape')
                 except Exception as e:
                     print("Exception raised. Corrupted file:", str(e))
+                    failed_files.append((cache_file, str(e)))
                     continue
 
                 # Keep only steps count activity
@@ -130,9 +143,12 @@ class Importer:
                     embedded_df.drop(['data_id', 'cache_filepath'], axis=1, inplace=True)
 
                     final_docs = embedded_df.to_dict(orient='records')
-                    self.database.insert_to_collection(new_coll, final_docs)
+                    self.database.insert_to_collection(collection, final_docs)
+        return failed_files
 
 
 if __name__ == '__main__':
     importer = Importer()
-    importer.merge_original_and_embedded_data('healthkit_stepscount_singles')
+    importer.merge_original_and_embedded_data(original_file='../../data/healthkit_data.csv',
+                                              embedded_file='../../data/file_handles_healthkit_data.csv',
+                                              collection_name='healthkit_stepscount_singles')
