@@ -43,14 +43,3 @@ class SlidingWindow:
             result.dropna(inplace=True)
 
         return result
-
-
-if __name__ == '__main__':
-    X, y = make_regression(n_samples=30, n_features=2, random_state=1)
-    df = pd.DataFrame(X)
-    print("Original timeseries data")
-    print(df)
-    sliding_window = SlidingWindow(n_in=2)
-    dataset = sliding_window.to_supervised_dataset(df)
-    print("Transformed dataset to supervised learning")
-    print(dataset)
