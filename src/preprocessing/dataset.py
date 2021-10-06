@@ -4,25 +4,24 @@ from sklearn.model_selection import TimeSeriesSplit
 
 from .window import SlidingWindow
 from .preprocess import Preprocessor
-from ..data.database import Database
+from ..data.database import HealthKitDatabase
 
 
 class DatasetBuilder:
     def __init__(self, n_in):
         self.sliding_window = SlidingWindow(n_in=n_in)
-        self.database = Database()
+        self.hk_database = HealthKitDatabase()
 
     def get_train_test(self, ratio=0.75):
-        # Sample data for two users.
-        # Sliding window per subject and then concat the results
-        # TODO: Fetch users' records from the database
+        users = self.hk_database.get_all_healthkit_users()
 
-        df1 = pd.read_pickle('../../df_one_user.pkl')
-        df2 = pd.read_pickle('../../user_with_2_faulty_records.pkl')
         dataset = pd.DataFrame()
+        for user in users[:100]:
+            cursor_results = self.hk_database.get_records_by_user(user_code=user)
+            user_data = list(cursor_results)
+            df_user = pd.DataFrame(user_data)
 
-        for df in [df1, df2]:
-            preprocessor = Preprocessor(df=df)
+            preprocessor = Preprocessor(df=df_user)
             preprocessor\
                 .remove_outlier_dates()\
                 .resample_dates()\
