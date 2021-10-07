@@ -23,8 +23,9 @@ class DatasetBuilder:
             users = self.hk_database.get_all_healthkit_users()
 
             dataset = pd.DataFrame()
-            for user in users[:100]:
+            for user in users:
                 cursor_results = self.hk_database.get_records_by_user(user_code=user)
+
                 user_data = list(cursor_results)
                 df_user = pd.DataFrame(user_data)
 
@@ -42,13 +43,13 @@ class DatasetBuilder:
                 # Append for each user to construct the final dataset
                 dataset = dataset.append(data)
 
-                # Re-sort based on the dates due to the mix of the different subjects
-                dataset.sort_index(inplace=True)
+            # Re-sort based on the dates due to the mix of the different subjects
+            dataset.sort_index(inplace=True)
 
-                if self.save_dataset:
-                    # Save dataset into 'data' directory to run ML experiments without
-                    # requiring the whole preprocessing
-                    dataset.to_pickle(self.directory.__str__())
+            if self.save_dataset:
+                # Save dataset into 'data' directory to run ML experiments without
+                # requiring the whole preprocessing
+                dataset.to_pickle(self.directory.__str__())
 
         y = dataset['var1(t)']
         X = dataset.drop(columns=['var1(t)'])
