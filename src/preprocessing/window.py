@@ -49,7 +49,7 @@ class SlidingWindow:
         offset_str = str(offset) + "H"
 
         # resample by offset, so days doesn't necessarily start from 00:00 (midnight)
-        agg_stepscount = data['var1(t-48)'].resample(rule=freq, offset=offset_str).sum()
+        agg_stepscount = data['var1(t)'.format(self.n_in)].resample(rule=freq, offset=offset_str).sum()
 
         # drop hourly predictions
         data.drop(columns=['var1(t)'], inplace=True)
@@ -59,16 +59,12 @@ class SlidingWindow:
         data['var1(t)'] = None
 
         # populate it with aggregated predictions
-        start_index = 0
-        end_index = 1
-        for i in range(1, agg_stepscount.shape[0]):
+        for i in range(0, agg_stepscount.shape[0]):
             start_date = agg_stepscount.index[i-1]
             end_date = agg_stepscount.index[i]
 
-            data.at[start_date:end_date, 'var1(t)'] = agg_stepscount[start_index]
-            start_index = end_index
-            end_index += 1
+            data.at[start_date:end_date, 'var1(t)'] = agg_stepscount[start_date]
 
-        data.dropna(inplace=True)
+        data.at[end_date:, 'var1(t)'] = agg_stepscount[end_date]
 
-        return data
+        return data[::self.n_in]
