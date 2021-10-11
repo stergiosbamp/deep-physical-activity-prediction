@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn.datasets import make_regression
 
 
 class SlidingWindow:
@@ -43,3 +42,33 @@ class SlidingWindow:
             result.dropna(inplace=True)
 
         return result
+
+    def aggregate_predictions(self, data, freq='1D'):
+        # find offset
+        offset = data.index[0].hour
+        offset_str = str(offset) + "H"
+
+        # resample by offset, so days doesn't necessarily start from 00:00 (midnight)
+        agg_stepscount = data['var1(t-48)'].resample(rule=freq, offset=offset_str).sum()
+
+        # drop hourly predictions
+        data.drop(columns=['var1(t)'], inplace=True)
+
+        # create again the prediction column to be populated
+        # with the aggregated values of the next day
+        data['var1(t)'] = None
+
+        # populate it with aggregated predictions
+        start_index = 0
+        end_index = 1
+        for i in range(1, agg_stepscount.shape[0]):
+            start_date = agg_stepscount.index[i-1]
+            end_date = agg_stepscount.index[i]
+
+            data.at[start_date:end_date, 'var1(t)'] = agg_stepscount[start_index]
+            start_index = end_index
+            end_index += 1
+
+        data.dropna(inplace=True)
+
+        return data
