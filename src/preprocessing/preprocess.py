@@ -56,8 +56,16 @@ class Preprocessor:
 
         return self
 
-    def filter_data_source(self):
-        pass
+    def has_hourly_records(self, days_in_hours):
+        start = self.df.index[0]
+        end = self.df.index[-1]
+
+        diff = end - start
+        required_days = days_in_hours / 24
+
+        if diff.days >= required_days:
+            return True
+        return False
 
     @staticmethod
     def _sin_transform(values):
