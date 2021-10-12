@@ -1,14 +1,34 @@
 import pandas as pd
 
 
-class SlidingWindow:
+class Window:
 
     def __init__(self, n_in, n_out=1, dropna=True):
+        """
+        Constructor
+        Args:
+            n_in: The number of lagged observations.
+            n_out: The number of output columns. Defaults to 1 for uni-variate time series problems.
+            dropna: Whether to drop nan values due to non-existing previous data.
+        """
+
         self.n_in = n_in
         self.n_out = n_out
         self.dropna = dropna
 
     def to_supervised_dataset(self, data: pd.DataFrame):
+        """
+        Function that turns a time series dataframe into a supervised
+        dataset by using lagged observations.
+
+        Args:
+            data: The data in a timeseries format. E.g. consecutive values
+
+        Returns:
+            The supervised dataset. For uni-variate time series problems, the output column
+            is named 'var1(t)'.
+        """
+
         n_vars = 1 if type(data) is list else data.shape[1]
 
         new_cols = []
@@ -44,6 +64,24 @@ class SlidingWindow:
         return result
 
     def aggregate_predictions(self, data, freq='1D'):
+        """
+        Function that aggregates predictions for the next day by default.
+        This is useful in a way that we want to predict the next day's steps, rather than
+        the steps of the next hour (if resampling by hour).
+
+        It return only the first from the n_in records, because the others are already included
+        in the aggregated value. So sliding in the next day's values is cheating.
+
+        Essentially it provides tumbling windows.
+
+        Args:
+            data: The data to aggregate
+            freq: The frequency of aggregation for resampling. Defaults to aggregation of next day's steps
+
+        Returns:
+            The dataset with output ('var1(t)' column) the aggregated steps count.
+        """
+
         # find offset
         offset = data.index[0].hour
         offset_str = str(offset) + "H"
