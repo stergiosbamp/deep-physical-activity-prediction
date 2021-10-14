@@ -42,7 +42,7 @@ class Preprocessor:
 
         return self
 
-    def add_sin_cos_features(self):
+    def add_sin_cos_features(self, keep_only_sin_cos_transforms=False):
         self.df['dayofweek_sin'] = self._sin_transform(self.df['dayofweek'])
         self.df['dayofweek_cos'] = self._cos_transform(self.df['dayofweek'])
         self.df['week_sin'] = self._sin_transform(self.df['week'])
@@ -53,6 +53,11 @@ class Preprocessor:
         self.df['day_cos'] = self._cos_transform(self.df['day'])
         self.df['hour_sin'] = self._sin_transform(self.df['hour'])
         self.df['hour_cos'] = self._cos_transform(self.df['hour'])
+
+        if keep_only_sin_cos_transforms:
+            self.df.drop(columns=[
+                'dayofweek', 'week', 'month', 'day', 'hour'
+            ], inplace=True)
 
         return self
 
