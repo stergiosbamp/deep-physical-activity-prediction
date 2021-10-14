@@ -13,12 +13,8 @@ class Preprocessor:
         return self
 
     def remove_outlier_dates(self):
-        # Sort by the date to see the faulty dates
-        self.df.sort_values('startTime', inplace=True)
-
         # Some missing dates were filled with 2021 year
         self.df = self.df[self.df['startTime'] < pd.to_datetime('2021')]
-
         # Some dates are with NaT values
         self.df.dropna(inplace=True)
         return self
@@ -29,8 +25,12 @@ class Preprocessor:
         self.df = self.df[(self.df["value"] < q_hi) & (self.df["value"] > q_low)]
         return self
 
-    def scale(self):
-        pass
+    def remove_duplicate_values_at_same_timestamp(self):
+        # Sort by the date to see if we have two consecutive days
+        # at the exact same timestamp with the exact same value of steps
+        self.df.sort_values('startTime', inplace=True)
+        self.df.drop_duplicates(subset=['startTime', 'value'], inplace=True)
+        return self
 
     def add_date_features(self):
         self.df['dayofweek'] = self.df.index.dayofweek

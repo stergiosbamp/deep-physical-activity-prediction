@@ -37,6 +37,7 @@ class DatasetBuilder:
 
                 preprocessor = Preprocessor(df=df_user)
                 preprocessor\
+                    .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
                     .resample_dates(frequency='1H')
 
