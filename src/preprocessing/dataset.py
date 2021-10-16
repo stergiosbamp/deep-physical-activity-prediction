@@ -21,11 +21,13 @@ class DatasetBuilder:
         self.window = Window(n_in=self.n_in)
         self.hk_database = HealthKitDatabase()
 
-    def get_train_test(self, ratio=0.75):
+    def create_dataset(self):
         if self.save_dataset and self.directory.exists():
             dataset = pd.read_pickle(self.directory.__str__())
-            # Drop the subject column, which can't be processed by ML models.
-            dataset.drop(columns=['subject'], inplace=True)
+
+            # If it's loading an existing dataset, return it without subject which can't be processed by ML models.
+            if self.save_dataset:
+                dataset.drop(columns=['subject'], inplace=True)
         else:
             users = self.hk_database.get_all_healthkit_users()
 
@@ -38,7 +40,7 @@ class DatasetBuilder:
                 df_user = pd.DataFrame(user_data)
 
                 preprocessor = Preprocessor(df=df_user)
-                preprocessor\
+                preprocessor \
                     .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
                     .resample_dates(frequency='1H')
@@ -56,16 +58,18 @@ class DatasetBuilder:
                     if self.users_included >= self.total_users:
                         break  # stop gathering records
 
-                preprocessor\
-                    .add_date_features()\
+                preprocessor \
+                    .add_date_features() \
                     .add_sin_cos_features()
 
                 df = preprocessor.df
                 df = self.window.to_supervised_dataset(df)
                 df = self.window.aggregate_predictions(df)
 
-                # Inject user (subject) id to know which records are from whom (by sorting), if needed.
-                df['subject'] = df_user['healthCode'].get(0)
+                # If the dataset is to be saved, inject user (subject) id to know which records are from
+                # whom (by sorting), if needed.
+                if self.save_dataset:
+                    df['subject'] = df_user['healthCode'].get(0)
 
                 # Append for each user to construct the final dataset
                 dataset = dataset.append(df)
@@ -77,6 +81,10 @@ class DatasetBuilder:
                 # Save dataset into 'data' directory to run ML experiments without
                 # requiring the whole preprocessing
                 dataset.to_pickle(self.directory.__str__())
+        return dataset
+
+    def get_train_test(self, ratio=0.75):
+        dataset = self.create_dataset()
 
         y = dataset['var1(t)']
         X = dataset.drop(columns=['var1(t)'])
@@ -99,7 +107,7 @@ class DatasetBuilder:
 
 def create_and_store_dataset(n_in, directory):
     dataset_builder = DatasetBuilder(n_in=n_in, save_dataset=True, directory=directory, total_users=None)
-    dataset_builder.get_train_test()
+    dataset_builder.create_dataset()
     print("Users discarded {} due to not enough {} records".format(dataset_builder.users_discarded, n_in))
 
 
