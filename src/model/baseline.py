@@ -1,22 +1,24 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.linear_model import SGDRegressor, Ridge
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.preprocessing.dataset import DatasetBuilder
 
 
 if __name__ == '__main__':
-    dataset_builder = DatasetBuilder(n_in=2*24, save_dataset=False, total_users=10)
+    dataset_builder = DatasetBuilder(n_in=5*24,
+                                     save_dataset=True,
+                                     directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl',
+                                     total_users=None)
 
     X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
 
-    pipe = make_pipeline(MinMaxScaler(), SGDRegressor(random_state=1))
+    pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
+
     pipe.fit(X_train, y_train)
     y_pred = pipe.predict(X_test)
     print("r2", r2_score(y_test, y_pred))
