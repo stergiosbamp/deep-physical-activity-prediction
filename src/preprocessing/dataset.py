@@ -10,11 +10,14 @@ from src.data.database import HealthKitDatabase
 
 
 class DatasetBuilder:
-    def __init__(self, n_in, save_dataset=True, directory='../../data/df_dataset_all_users.pkl', total_users=None):
+    def __init__(self, n_in, granularity, save_dataset=True, directory='../../data/df_dataset_all_users.pkl',
+                 total_users=None):
         self.n_in = n_in
+        self.granularity = granularity
         self.save_dataset = save_dataset
         self.directory = Path(directory)
         self.total_users = total_users
+        self.days_in_hours = self.n_in if self.n_in % 24 == 0 else self.n_in * 24
 
         self.users_included = 0
         self.users_discarded = 0
@@ -34,7 +37,7 @@ class DatasetBuilder:
             dataset = pd.DataFrame()
 
             for user in tqdm(users):
-                cursor_results = self.hk_database.get_records_by_user(user_code=user)
+                cursor_results = self.hk_database.get_records_by_user(user_code='6b8c1a62-7121-47f1-8d99-5a26ec89ace2')
 
                 user_data = list(cursor_results)
                 df_user = pd.DataFrame(user_data)
@@ -43,10 +46,9 @@ class DatasetBuilder:
                 preprocessor \
                     .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
-                    .resample_dates(frequency='1H')
+                    .resample_dates(frequency=self.granularity)
 
-                if not preprocessor.has_hourly_records(days_in_hours=self.n_in):
-                    print("User {} has not aggregated hourly records for {} hours.".format(user, self.n_in))
+                if not preprocessor.has_hourly_records(days_in_hours=self.days_in_hours):
                     self.users_discarded += 1
                     continue  # go to the next user and ignore the current one
 
@@ -64,7 +66,12 @@ class DatasetBuilder:
 
                 df = preprocessor.df
                 df = self.window.to_supervised_dataset(df)
-                df = self.window.aggregate_predictions(df)
+
+                # If granularity of resampling is 1 day then there is no need to aggregate predictions for the next
+                # day.
+                # They are already sampled by day, so the sliding window is enough.
+                if self.granularity != '1D':
+                    df = self.window.aggregate_predictions(df)
 
                 # If the dataset is to be saved, inject user (subject) id to know which records are from
                 # whom (by sorting), if needed.
@@ -105,15 +112,44 @@ class DatasetBuilder:
         pass
 
 
-def create_and_store_dataset(n_in, directory):
-    dataset_builder = DatasetBuilder(n_in=n_in, save_dataset=True, directory=directory, total_users=None)
+def create_and_store_dataset(n_in, directory, granularity):
+    dataset_builder = DatasetBuilder(n_in=n_in, granularity=granularity, save_dataset=True, directory=directory,
+                                     total_users=None)
     dataset_builder.create_dataset()
     print("Users discarded {} due to not enough {} records".format(dataset_builder.users_discarded, n_in))
 
 
 if __name__ == '__main__':
-    create_and_store_dataset(n_in=1*24, directory='../../data/df-1*24-all-features-all-users-with-subject-injected.pkl')
-    create_and_store_dataset(n_in=2*24, directory='../../data/df-2*24-all-features-all-users-with-subject-injected.pkl')
-    create_and_store_dataset(n_in=3*24, directory='../../data/df-3*24-all-features-all-users-with-subject-injected.pkl')
-    create_and_store_dataset(n_in=4*24, directory='../../data/df-4*24-all-features-all-users-with-subject-injected.pkl')
-    create_and_store_dataset(n_in=5*24, directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl')
+    # Hourly granularity datasets
+    create_and_store_dataset(n_in=1*24,
+                             directory='../../data/df-1*24-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=2*24,
+                             directory='../../data/df-2*24-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=3*24,
+                             directory='../../data/df-3*24-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=4*24,
+                             directory='../../data/df-4*24-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=5*24,
+                             directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1H')
+
+    # Daily granularity datasets
+    create_and_store_dataset(n_in=1,
+                             directory='../../data/aadf-1-day-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1D')
+    create_and_store_dataset(n_in=2,
+                             directory='../../data/df-2-day-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1D')
+    create_and_store_dataset(n_in=3,
+                             directory='../../data/df-3-day-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1D')
+    create_and_store_dataset(n_in=4,
+                             directory='../../data/df-4-day-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1D')
+    create_and_store_dataset(n_in=5,
+                             directory='../../data/df-5-day-all-features-all-users-with-subject-injected.pkl',
+                             granularity='1D')
