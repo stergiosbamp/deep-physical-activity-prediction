@@ -37,7 +37,7 @@ class DatasetBuilder:
             dataset = pd.DataFrame()
 
             for user in tqdm(users):
-                cursor_results = self.hk_database.get_records_by_user(user_code='6b8c1a62-7121-47f1-8d99-5a26ec89ace2')
+                cursor_results = self.hk_database.get_records_by_user(user_code=user)
 
                 user_data = list(cursor_results)
                 df_user = pd.DataFrame(user_data)
