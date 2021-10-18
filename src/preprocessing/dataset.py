@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
     # Daily granularity datasets
     create_and_store_dataset(n_in=1,
-                             directory='../../data/aadf-1-day-all-features-all-users-with-subject-injected.pkl',
+                             directory='../../data/df-1-day-all-features-all-users-with-subject-injected.pkl',
                              granularity='1D')
     create_and_store_dataset(n_in=2,
                              directory='../../data/df-2-day-all-features-all-users-with-subject-injected.pkl',
