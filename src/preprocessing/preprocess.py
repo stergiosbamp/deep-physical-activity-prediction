@@ -8,7 +8,7 @@ class Preprocessor:
         self.df = df[['startTime', 'value']]
         self.df['value'] = df['value'].astype('float64')
 
-    def resample_dates(self, frequency='1H'):
+    def resample_dates(self, frequency):
         self.df = self.df.resample(frequency, on='startTime').sum()
         return self
 
