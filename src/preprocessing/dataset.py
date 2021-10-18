@@ -67,11 +67,7 @@ class DatasetBuilder:
                 df = preprocessor.df
                 df = self.window.to_supervised_dataset(df)
 
-                # If granularity of resampling is 1 day then there is no need to aggregate predictions for the next
-                # day.
-                # They are already sampled by day, so the sliding window is enough.
-                if self.granularity != '1D':
-                    df = self.window.aggregate_predictions(df)
+                df = self.window.aggregate_predictions(df)
 
                 # If the dataset is to be saved, inject user (subject) id to know which records are from
                 # whom (by sorting), if needed.
