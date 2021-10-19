@@ -85,7 +85,7 @@ class DatasetBuilder:
                     .remove_outlier_dates() \
                     .resample_dates(frequency=self.granularity)
 
-                if not preprocessor.has_hourly_records(days_in_hours=self.days_in_hours):
+                if not preprocessor.has_enough_records(days_in_hours=self.days_in_hours):
                     self.users_discarded += 1
                     continue  # go to the next user and ignore the current one
 

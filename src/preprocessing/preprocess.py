@@ -121,7 +121,18 @@ class Preprocessor:
 
         return self
 
-    def has_hourly_records(self, days_in_hours):
+    def has_enough_records(self, days_in_hours):
+        """
+        Method that finds if the user's data have the required number of days (in hours) (after resampling) to be used
+        later in the window.
+
+        Args:
+            days_in_hours (int): The days in hours.
+
+        Returns:
+            (bool): Whether user has enough records to be used later in the window.
+        """
+
         start = self.df.index[0]
         end = self.df.index[-1]
 
