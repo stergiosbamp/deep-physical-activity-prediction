@@ -10,6 +10,35 @@ from src.data.database import HealthKitDatabase
 
 
 class DatasetBuilder:
+    """
+    Class the constructs a dataset from the HealthKit data, to be used by ML models.
+
+    Attributes:
+        n_in: (int): The number of lagged observations for the window construction.
+
+        granularity (str): The string in panda's offset style for resampling and aggregating the time series data.
+
+        save_dataset (bool): Whether to save the resulted dataset.
+
+        directory (str): The directory to save the dataset. It creates a pathlib.Path instance from this string.
+
+        total_users (Union[int, None]): The amount of users to include for the construction of the dataset. If its
+            None then construct the dataset for all available users.
+
+        days_in_hours (int): How many days to use as lag for the sliding window. It's expressed in hours.
+            1 day = 24 hours.
+
+        users_included (int): How many users are included in the constructed dataset.
+
+        users_discarded (int): How many users are discarded in the constructed dataset due to not enough records for
+            the window.
+
+        window (window.Window): The window class that can create sliding and tumbling windows.
+
+        hk_database (database.HealthKitDatabase): A HealthKitDatabase instance for performing common operation to the
+            collection.
+    """
+
     def __init__(self, n_in, granularity, save_dataset=True, directory='../../data/df_dataset_all_users.pkl',
                  total_users=None):
         self.n_in = n_in
@@ -25,6 +54,14 @@ class DatasetBuilder:
         self.hk_database = HealthKitDatabase()
 
     def create_dataset(self):
+        """
+        Function that creates the dataset using sliding and/or tumbling window for aggregated predictions.
+        It iterates over every users' data and applies the appropriate data cleaning operations.
+
+        Returns:
+            (pd.DataFrame): The dataset as a DataFrame.
+        """
+
         if self.save_dataset and self.directory.exists():
             dataset = pd.read_pickle(self.directory.__str__())
 
@@ -48,7 +85,7 @@ class DatasetBuilder:
                     .remove_outlier_dates() \
                     .resample_dates(frequency=self.granularity)
 
-                if not preprocessor.has_hourly_records(days_in_hours=self.days_in_hours):
+                if not preprocessor.has_enough_records(days_in_hours=self.days_in_hours):
                     self.users_discarded += 1
                     continue  # go to the next user and ignore the current one
 
@@ -87,6 +124,17 @@ class DatasetBuilder:
         return dataset
 
     def get_train_test(self, ratio=0.75):
+        """
+        Returns train and test data respecting the chronological order of the time series dataset.
+
+        Args:
+            ratio (float): The ratio for training/testing.
+
+        Returns:
+            (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The x_train, x_test, y_train,
+                y_test sub-datasets.
+        """
+
         dataset = self.create_dataset()
 
         y = dataset['var1(t)']
@@ -109,6 +157,15 @@ class DatasetBuilder:
 
 
 def create_and_store_dataset(n_in, directory, granularity):
+    """
+    Utility module's function that creates a variety of datasets.
+
+    Args:
+        n_in: (int): The number of lagged observations for the window construction.
+        directory (str): The directory to save the dataset.
+        granularity (str): The string in panda's offset style for resampling and aggregating the time series data.
+    """
+
     dataset_builder = DatasetBuilder(n_in=n_in, granularity=granularity, save_dataset=True, directory=directory,
                                      total_users=None)
     dataset_builder.create_dataset()
@@ -133,7 +190,8 @@ if __name__ == '__main__':
                              directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl',
                              granularity='1H')
 
-    # Daily granularity datasets
+    # Daily granularity datasets. Note that lag observations here are 1, 2, 3, etc. because we resample and aggregate
+    # by day and not by hour as before.
     create_and_store_dataset(n_in=1,
                              directory='../../data/df-1-day-all-features-all-users-with-subject-injected.pkl',
                              granularity='1D')

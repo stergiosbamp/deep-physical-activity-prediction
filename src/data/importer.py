@@ -7,6 +7,12 @@ from tqdm import tqdm
 
 
 class Importer:
+    """
+    Class to import download Synapse data to MongoDB.
+
+    Attributes:
+        database (database.Database): The database class to perform database operations.
+    """
 
     def __init__(self):
         self.database = Database()
@@ -16,8 +22,8 @@ class Importer:
         Imports in MongoDB a synapse entity (table).
 
         Args:
-            dataframe: The synapse table in a DataFrame format
-            collection_name: The collection name of MongoDB to be saved
+            dataframe: The synapse table in a DataFrame format.
+            collection_name: The collection name of MongoDB to be saved.
         """
 
         docs = dataframe.to_dict(orient='records')
@@ -30,13 +36,12 @@ class Importer:
         Imports from the file handle ids all the embedded files.
 
         Args:
-            dataframe: The file handle ids in DataFrame format
-            collection_name: The collection name of MongoDB to be saved
+            dataframe (pd.DataFrame): The file handle ids in DataFrame format.
+            collection_name (str): The collection name of MongoDB to be saved.
 
         Returns:
-            A list with tuples that weren't successfully imported into database.
-            Format is:
-                (data_id, reason)
+            (list): A list with tuples that weren't successfully imported into database.
+                Format is: (data_id, reason)
         """
 
         collection = self.database.get_or_create_collection(collection_name)
@@ -71,18 +76,19 @@ class Importer:
 
     def merge_original_and_embedded_data(self, original_file, embedded_file, collection_name, activity_to_keep='HKQuantityTypeIdentifierStepCount'):
         """
-        Function that joins original and embedded files and imports them into Mongo flattened.
+        Function that joins original and embedded files and imports them into Mongo flattened (e.g. single records).
 
         Args:
-            original_file: The csv file of the original table data
-            embedded_file: The csv file of with the embedded data
-            collection_name: The collection name to save the merged results
-            activity_to_keep: What activity to filter out from the availables of the Apple's Healthkit
+            original_file (str): The csv file path of the original table data.
+            embedded_file (str): The csv file path of with the embedded data.
+            collection_name (str): The collection name to save the merged results.
+            activity_to_keep (str): What activity to filter out from the availables of the Apple's Healthkit.
+                Defaults to steps count activity which is of our interest.
 
         Returns:
-            A list with tuples that weren't successfully imported into database.
-            Format is:
-                (embedded_file_path, reason)
+            (list): A list with tuples that weren't successfully imported into database.
+                Format is:
+                    (embedded_file_path, reason)
         """
 
         collection = self.database.get_or_create_collection(collection_name)

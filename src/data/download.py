@@ -10,11 +10,28 @@ from importer import Importer
 
 
 class Downloader:
+    """
+    Class that downloads data from Synapse. Makes use of their python client.
+
+    Attributes:
+        syn (synapseclient.Synapse): The Synapse instance.
+    """
+
     def __init__(self, user, password):
         self.syn = synapseclient.Synapse()
         self.syn.login(user, password)
 
-    def download_synapse_table_as_csv(self, entity_id):
+    def download_synapse_table_as_df(self, entity_id):
+        """
+        Downloads a whole Synapse table as a DataFrame.
+
+        Args:
+            entity_id (str): The synapse entity id as str.
+
+        Returns:
+            (pd.DataFrame): The table's data as a DataFrame.
+        """
+
         entity = self.syn.tableQuery("SELECT * FROM {}".format(entity_id))
         df = entity.asDataFrame()
 
@@ -25,15 +42,18 @@ class Downloader:
 
     def download_embedded_data_files(self, embedded_column, entity_id):
         """
-        Downloads all embedded files for a synapse table to default directory.
+        Downloads all embedded files for a Synapse table to default directory.
         This is under '/home/{USER}/.synapseCache/'.
 
+        Note that the client is easy to look for already
+        downloaded files to not download them again, if exist.
+
         Args:
-            embedded_column: The name of the column that holds embedded files
-            entity_id: The synapse entity id
+            embedded_column (str): The name of the column that holds embedded files.
+            entity_id (str): The synapse entity id as str.
 
         Returns:
-            The dictionary that holds the id of the file with it's corresponding path where it's downloaded.
+            (dict): The dictionary that holds the id of the file with it's corresponding path where it's downloaded.
         """
 
         query_results = self.syn.tableQuery("SELECT * FROM {}".format(entity_id))
@@ -52,7 +72,7 @@ if __name__ == '__main__':
 
     # Download original tables
     for table, entity_id in SYNAPSE_TABLES.items():
-        df = downloader.download_synapse_table_as_csv(entity_id)
+        df = downloader.download_synapse_table_as_df(entity_id)
 
         # Save it as csv
         df.to_csv("../../data/{}.csv".format(table))
