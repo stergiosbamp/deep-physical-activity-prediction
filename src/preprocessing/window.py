@@ -2,31 +2,30 @@ import pandas as pd
 
 
 class Window:
+    """
+    Class the performs window operations.
+
+    Attributes:
+        n_in (int): The number of lagged observations for the window construction.
+        n_out (int): The number of output columns. Defaults to 1 for uni-variate time series problems.
+        dropna (bool): Whether to drop nan values due to non-existing previous data.
+    """
 
     def __init__(self, n_in, n_out=1, dropna=True):
-        """
-        Constructor
-        Args:
-            n_in: The number of lagged observations.
-            n_out: The number of output columns. Defaults to 1 for uni-variate time series problems.
-            dropna: Whether to drop nan values due to non-existing previous data.
-        """
-
         self.n_in = n_in
         self.n_out = n_out
         self.dropna = dropna
 
-    def to_supervised_dataset(self, data: pd.DataFrame):
+    def to_supervised_dataset(self, data):
         """
-        Function that turns a time series dataframe into a supervised
-        dataset by using lagged observations.
+        Function that turns a time series dataframe into a supervised dataset by using lagged observations.
 
         Args:
-            data: The data in a timeseries format. E.g. consecutive values
+            data (pd.DataFrame): The data in a timeseries format. E.g. consecutive values.
 
         Returns:
-            The supervised dataset. For uni-variate time series problems, the output column
-            is named 'var1(t)'.
+            (pd.DataFrame): The supervised dataset. For uni-variate time series problems, the output column
+                is named 'var1(t)'.
         """
 
         n_vars = 1 if type(data) is list else data.shape[1]
@@ -75,11 +74,12 @@ class Window:
         Essentially it provides tumbling windows.
 
         Args:
-            data: The data to aggregate
-            freq: The frequency of aggregation for resampling. Defaults to aggregation of next day's steps
+            data (pd.DataFrame): The data to aggregate the predictions
+            freq (str): The frequency in panda's style of aggregation for resampling. Defaults to aggregation
+                of next day's steps
 
         Returns:
-            The dataset with output ('var1(t)' column) the aggregated steps count.
+            (pd.DataFrame): The dataset with output ('var1(t)' column) the aggregated steps count.
         """
 
         # find offset
