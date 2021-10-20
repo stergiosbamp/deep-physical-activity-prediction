@@ -11,6 +11,7 @@ import pandas as pd
 
 from sklearn.linear_model import Ridge
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -95,3 +96,9 @@ if __name__ == '__main__':
                        '../../results/tree_daily_windows_performance.csv')
 
     # Ensemble model
+    gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
+
+    record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+                       '../../results/gb_hourly_windows_performance.csv')
+    record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+                       '../../results/gb_daily_windows_performance.csv')
