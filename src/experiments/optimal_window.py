@@ -6,9 +6,11 @@ Note that these datasets do not have outlier values removed. However by-hand exp
 affect much the performance.
 """
 
+import os
 import pandas as pd
 
 from sklearn.linear_model import Ridge
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -43,14 +45,17 @@ DAILY_DATASET_PATHS = [
 
 def record_performance(model, windows, dataset_paths, path_results):
 
+    if os.path.exists(path_results):
+        return
+
     results = {}
 
-    for hourly_window, hourly_dataset_path in zip(windows, dataset_paths):
+    for window, dataset_path in zip(windows, dataset_paths):
         # create dataset
-        dataset_builder = DatasetBuilder(n_in=hourly_window,
-                                         granularity='1H',
+        dataset_builder = DatasetBuilder(n_in=window,
+                                         granularity='whatever',
                                          save_dataset=True,
-                                         directory=hourly_dataset_path,
+                                         directory=dataset_path,
                                          total_users=None)
 
         X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
@@ -66,7 +71,7 @@ def record_performance(model, windows, dataset_paths, path_results):
         median_ae = median_absolute_error(y_test, y_pred)
 
         # record
-        results[hourly_window] = {"r2": r2, "mae": mae, "mape": mape, "median_ae": median_ae}
+        results[window] = {"r2": r2, "mae": mae, "mape": mape, "median_ae": median_ae}
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
@@ -74,6 +79,19 @@ def record_performance(model, windows, dataset_paths, path_results):
 
 
 if __name__ == '__main__':
-    pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
-    record_performance(pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS, '../../results/hourly_windows_performance.csv')
-    record_performance(pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS, '../../results/daily_windows_performance.csv')
+    # Linear model
+    ridge_pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
+
+    record_performance(ridge_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+                       '../../results/ridge_hourly_windows_performance.csv')
+    record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+                       '../../results/ridge_daily_windows_performance.csv')
+
+    # Tree model
+    trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
+    record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+                       '../../results/tree_hourly_windows_performance.csv')
+    record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+                       '../../results/tree_daily_windows_performance.csv')
+
+    # Ensemble model
