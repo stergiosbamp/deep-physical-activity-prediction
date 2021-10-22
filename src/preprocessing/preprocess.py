@@ -72,10 +72,9 @@ class Preprocessor:
             (self).
         """
 
-        # Sort by the date to see if we have two consecutive days
+        # Drop subsequent days that have
         # at the exact same timestamp with the exact same value of steps
-        self.df.sort_values('startTime', inplace=True)
-        self.df.drop_duplicates(subset=['startTime', 'value'], inplace=True)
+        self.df.drop_duplicates(subset=['startTime', 'value'], keep='first', inplace=True)
         return self
 
     def add_date_features(self):
