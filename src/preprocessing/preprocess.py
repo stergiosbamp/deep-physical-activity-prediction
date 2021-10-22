@@ -48,7 +48,7 @@ class Preprocessor:
         self.df.dropna(inplace=True)
         return self
 
-    def remove_outlier_values(self, q=0.1):
+    def remove_outlier_values(self, q=0.05):
         """
         Removes outlier steps count data by using the quantile method.
 

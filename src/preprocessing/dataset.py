@@ -83,6 +83,7 @@ class DatasetBuilder:
                 preprocessor \
                     .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
+                    .remove_outlier_values(q=0.05) \
                     .resample_dates(frequency=self.granularity)
 
                 if not preprocessor.has_enough_records(days_in_hours=self.days_in_hours):
