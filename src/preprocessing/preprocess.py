@@ -27,6 +27,10 @@ class Preprocessor:
         Returns:
             (self).
         """
+        # check if after outliers removal, df is empty then return the empty df
+        # e.g. (the same object as is)
+        if self.df.empty:
+            return self
 
         offset = self.df['startTime'].iloc[0].hour
         offset_str = str(offset) + "H"
@@ -62,6 +66,29 @@ class Preprocessor:
         q_low = self.df["value"].quantile(q)
         q_hi = self.df["value"].quantile(1 - q)
         self.df = self.df[(self.df["value"] < q_hi) & (self.df["value"] > q_low)]
+        return self
+
+    def impute_zeros(self, start_hour=12, end_hour=21):
+        """
+        Imputes zero steps values in specific times using the interpolation method.
+        By default it imputes zeros between 12:00 PM to 21:00PM. If there are data between this time period, and
+        zeros too, then interpolates those zeros.
+        The intuition is not to impute every zero since the zero values in the midnight and first morning hours are
+        realistic.
+
+        Args:
+            start_hour:
+            end_hour:
+
+        Returns:
+            (self).
+
+        """
+
+        mask = (self.df.index.hour >= start_hour) & (self.df.index.hour <= end_hour) & (self.df['value'] == 0)
+        # Replace those zeros with NaN to be caught by the pandas' interpolate method.
+        self.df.loc[mask] = np.nan
+        self.df.interpolate(method='time', inplace=True, limit_direction='forward')
         return self
 
     def remove_duplicate_values_at_same_timestamp(self):
