@@ -86,7 +86,7 @@ class DatasetBuilder:
                     .remove_outlier_values(q=0.05) \
                     .resample_dates(frequency=self.granularity)
 
-                if not preprocessor.has_enough_records(days_in_hours=self.days_in_hours):
+                if preprocessor.df.empty or (not preprocessor.has_enough_records(days_in_hours=self.days_in_hours)):
                     self.users_discarded += 1
                     continue  # go to the next user and ignore the current one
 
@@ -99,6 +99,7 @@ class DatasetBuilder:
                         break  # stop gathering records
 
                 preprocessor \
+                    .impute_zeros() \
                     .add_date_features() \
                     .add_sin_cos_features()
 
@@ -174,6 +175,28 @@ def create_and_store_dataset(n_in, directory, granularity):
 
 
 if __name__ == '__main__':
+    # Hourly granularity datasets
+    create_and_store_dataset(n_in=1 * 24,
+                             directory='../../data/df-1*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=2 * 24,
+                             directory='../../data/df-2*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=3 * 24,
+                             directory='../../data/df-3*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=4 * 24,
+                             directory='../../data/df-4*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
+    create_and_store_dataset(n_in=5 * 24,
+                             directory='../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
+
     # Hourly granularity datasets
     create_and_store_dataset(n_in=1*24,
                              directory='../../data/df-1*24-all-features-all-users-with-subject-injected.pkl',
