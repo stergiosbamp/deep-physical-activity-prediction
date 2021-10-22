@@ -75,6 +75,8 @@ class Preprocessor:
         zeros too, then interpolates those zeros.
         The intuition is not to impute every zero since the zero values in the midnight and first morning hours are
         realistic.
+        This function has meaning and applies only when resampling by hour e.g. for hourly datasets and not for daily
+        datasets.
 
         Args:
             start_hour (int): The starting hour in 24-hours format, for imputation of zeros.
@@ -88,7 +90,7 @@ class Preprocessor:
         mask = (self.df.index.hour >= start_hour) & (self.df.index.hour <= end_hour) & (self.df['value'] == 0)
         # Replace those zeros with NaN to be caught by the pandas' interpolate method.
         self.df.loc[mask] = np.nan
-        self.df.interpolate(method='time', inplace=True, limit_direction='forward')
+        self.df.interpolate(method='linear', inplace=True, limit_direction='forward')
         return self
 
     def remove_duplicate_values_at_same_timestamp(self):
