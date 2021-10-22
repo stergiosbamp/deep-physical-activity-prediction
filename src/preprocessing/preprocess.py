@@ -77,8 +77,8 @@ class Preprocessor:
         realistic.
 
         Args:
-            start_hour:
-            end_hour:
+            start_hour (int): The starting hour in 24-hours format, for imputation of zeros.
+            end_hour (int): The ending hour in 24-hours format, for imputation of zeros.
 
         Returns:
             (self).
