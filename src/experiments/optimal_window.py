@@ -20,7 +20,7 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 HOURLY_WINDOWS = [
-    1*24, 2*24, 3*24, 4*24, 5*24
+    1*24, 2*24, 3*24, 4*24, 5*24, 6*24
 ]
 
 HOURLY_DATASET_PATHS = [
@@ -28,7 +28,8 @@ HOURLY_DATASET_PATHS = [
     '../../data/df-2*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
     '../../data/df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
     '../../data/df-4*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'
+    '../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
+    '../../data/df-6*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'
 ]
 
 DAILY_WINDOWS = [
@@ -41,6 +42,7 @@ DAILY_DATASET_PATHS = [
     '../../data/df-3-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
     '../../data/df-4-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
     '../../data/df-5-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
+    '../../data/df-6-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
 ]
 
 
