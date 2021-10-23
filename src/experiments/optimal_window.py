@@ -33,7 +33,7 @@ HOURLY_DATASET_PATHS = [
 ]
 
 DAILY_WINDOWS = [
-    1, 2, 3, 4, 5
+    1, 2, 3, 4, 5, 6
 ]
 
 DAILY_DATASET_PATHS = [
