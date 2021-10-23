@@ -27,8 +27,15 @@ class Preprocessor:
         Returns:
             (self).
         """
+        # check if after outliers removal, df is empty then return the empty df
+        # e.g. (the same object as is)
+        if self.df.empty:
+            return self
 
-        self.df = self.df.resample(frequency, on='startTime').sum()
+        offset = self.df['startTime'].iloc[0].hour
+        offset_str = str(offset) + "H"
+
+        self.df = self.df.resample(rule=frequency, on='startTime', offset=offset_str).sum()
         return self
 
     def remove_outlier_dates(self):
@@ -45,7 +52,7 @@ class Preprocessor:
         self.df.dropna(inplace=True)
         return self
 
-    def remove_outlier_values(self, q=0.1):
+    def remove_outlier_values(self, q=0.05):
         """
         Removes outlier steps count data by using the quantile method.
 
@@ -61,6 +68,31 @@ class Preprocessor:
         self.df = self.df[(self.df["value"] < q_hi) & (self.df["value"] > q_low)]
         return self
 
+    def impute_zeros(self, start_hour=12, end_hour=21):
+        """
+        Imputes zero steps values in specific times using the interpolation method.
+        By default it imputes zeros between 12:00 PM to 21:00PM. If there are data between this time period, and
+        zeros too, then interpolates those zeros.
+        The intuition is not to impute every zero since the zero values in the midnight and first morning hours are
+        realistic.
+        This function has meaning and applies only when resampling by hour e.g. for hourly datasets and not for daily
+        datasets.
+
+        Args:
+            start_hour (int): The starting hour in 24-hours format, for imputation of zeros.
+            end_hour (int): The ending hour in 24-hours format, for imputation of zeros.
+
+        Returns:
+            (self).
+
+        """
+
+        mask = (self.df.index.hour >= start_hour) & (self.df.index.hour <= end_hour) & (self.df['value'] == 0)
+        # Replace those zeros with NaN to be caught by the pandas' interpolate method.
+        self.df.loc[mask] = np.nan
+        self.df.interpolate(method='linear', inplace=True, limit_direction='forward')
+        return self
+
     def remove_duplicate_values_at_same_timestamp(self):
         """
         Removes the exactly identical records based on the time (startTime) and the according value of steps.
@@ -69,10 +101,9 @@ class Preprocessor:
             (self).
         """
 
-        # Sort by the date to see if we have two consecutive days
+        # Drop subsequent days that have
         # at the exact same timestamp with the exact same value of steps
-        self.df.sort_values('startTime', inplace=True)
-        self.df.drop_duplicates(subset=['startTime', 'value'], inplace=True)
+        self.df.drop_duplicates(subset=['startTime', 'value'], keep='first', inplace=True)
         return self
 
     def add_date_features(self):
