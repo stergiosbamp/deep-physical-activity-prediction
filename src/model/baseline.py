@@ -11,8 +11,10 @@ from src.preprocessing.dataset import DatasetBuilder
 
 if __name__ == '__main__':
     dataset_builder = DatasetBuilder(n_in=5*24,
+                                     granularity='1H',
                                      save_dataset=True,
-                                     directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl',
+                                     directory='../../data/df-5-day-imputed-no-outliers-all-features-all-users-with'
+                                               '-subject-injected.pkl',
                                      total_users=None)
 
     X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
