@@ -39,6 +39,10 @@ if __name__ == '__main__':
                              directory='../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject'
                                        '-injected.pkl',
                              granularity='1H')
+    create_and_store_dataset(n_in=6 * 24,
+                             directory='../../data/df-6*24-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1H')
 
     # Daily granularity datasets with imputation and no outlier values
     create_and_store_dataset(n_in=1,
@@ -59,6 +63,10 @@ if __name__ == '__main__':
                              granularity='1D')
     create_and_store_dataset(n_in=5,
                              directory='../../data/df-5-day-imputed-no-outliers-all-features-all-users-with-subject'
+                                       '-injected.pkl',
+                             granularity='1D')
+    create_and_store_dataset(n_in=6,
+                             directory='../../data/df-6-day-imputed-no-outliers-all-features-all-users-with-subject'
                                        '-injected.pkl',
                              granularity='1D')
 
