@@ -106,7 +106,12 @@ class DatasetBuilder:
                 df = preprocessor.df
                 df = self.window.to_supervised_dataset(df)
 
-                df = self.window.aggregate_predictions(df)
+                # The aggregation of predictions for the next day, should only be done
+                # when we have hourly records. Otherwise (i.e. when having daily records)
+                # the returned results are returned chunked due to the tumbling window and thus
+                # we lose records that are associated with each other as a time-series.
+                if self.granularity == '1H':
+                    df = self.window.aggregate_predictions(df)
 
                 # If the dataset is to be saved, inject user (subject) id to know which records are from
                 # whom (by sorting), if needed.
