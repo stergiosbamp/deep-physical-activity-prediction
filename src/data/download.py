@@ -5,8 +5,8 @@ import os
 
 from dotenv import load_dotenv
 
-from config import SYNAPSE_TABLES, TABLES_EMBEDDED_DATA_COLUMN
-from importer import Importer
+from src.data.importer import Importer
+from src.config.synapse import SYNAPSE_TABLES, TABLES_EMBEDDED_DATA_COLUMN
 
 
 class Downloader:

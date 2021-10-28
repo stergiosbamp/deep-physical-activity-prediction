@@ -1,8 +1,9 @@
 import pandas as pd
 
-from database import Database
 from datetime import datetime
 from tqdm import tqdm
+
+from src.data.database import Database
 
 
 class Importer:
