@@ -75,7 +75,7 @@ if __name__ == '__main__':
         df = downloader.download_synapse_table_as_df(entity_id)
 
         # Save it as csv
-        df.to_csv("../../data/{}.csv".format(table))
+        df.to_csv("../../data/synapse/{}.csv".format(table))
 
         # And import them to Mongo
         importer.import_syn_table(dataframe=df, collection_name=table)
@@ -88,12 +88,12 @@ if __name__ == '__main__':
 
         # Save the file handle ids as csv
         df_files = pd.DataFrame.from_dict(file_handles, orient='index')
-        df_files.to_csv('../../data/file_handles_{}.csv'.format(table_name))
+        df_files.to_csv('../../data/synapse/file_handles_{}.csv'.format(table_name))
 
         # And import each file from the handle ids file with '_embedded' collection name
         failed_ids = importer.import_embedded_data(dataframe=df_files, collection_name=table_name + "_embedded")
 
         # Write in a pickle how many files are corrupted from all the embedded csv
         # Answer: Only 2 embedded files
-        with open("../../failed_ids_{}.pkl".format(table_name), 'wb') as f:
+        with open("../../synapse/failed_ids_{}.pkl".format(table_name), 'wb') as f:
             pickle.dump(failed_ids, f)

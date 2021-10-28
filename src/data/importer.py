@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 from database import Database
 from datetime import datetime
@@ -155,6 +154,6 @@ class Importer:
 
 if __name__ == '__main__':
     importer = Importer()
-    importer.merge_original_and_embedded_data(original_file='../../data/healthkit_data.csv',
-                                              embedded_file='../../data/file_handles_healthkit_data.csv',
+    importer.merge_original_and_embedded_data(original_file='../../data/synapse/healthkit_data.csv',
+                                              embedded_file='../../data/synapse/file_handles_healthkit_data.csv',
                                               collection_name='healthkit_stepscount_singles')
