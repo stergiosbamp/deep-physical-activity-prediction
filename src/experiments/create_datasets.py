@@ -1,4 +1,7 @@
+import os
+
 from src.preprocessing.dataset import DatasetBuilder
+from src.config.directory import BASE_PATH_DAILY_DATASETS, BASE_PATH_HOURLY_DATASETS
 
 
 def create_and_store_dataset(n_in, directory, granularity):
@@ -20,87 +23,54 @@ def create_and_store_dataset(n_in, directory, granularity):
 if __name__ == '__main__':
     # Hourly granularity datasets with imputation and no outlier values
     create_and_store_dataset(n_in=1 * 24,
-                             directory='../../data/df-1*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-1*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
     create_and_store_dataset(n_in=2 * 24,
-                             directory='../../data/df-2*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-2*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
     create_and_store_dataset(n_in=3 * 24,
-                             directory='../../data/df-3*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
     create_and_store_dataset(n_in=4 * 24,
-                             directory='../../data/df-4*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-4*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
     create_and_store_dataset(n_in=5 * 24,
-                             directory='../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-5*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
     create_and_store_dataset(n_in=6 * 24,
-                             directory='../../data/df-6*24-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
+                             directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                    'df-6*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1H')
 
-    # Daily granularity datasets with imputation and no outlier values
-    create_and_store_dataset(n_in=1,
-                             directory='../../data/df-1-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-    create_and_store_dataset(n_in=2,
-                             directory='../../data/df-2-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-    create_and_store_dataset(n_in=3,
-                             directory='../../data/df-3-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-    create_and_store_dataset(n_in=4,
-                             directory='../../data/df-4-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-    create_and_store_dataset(n_in=5,
-                             directory='../../data/df-5-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-    create_and_store_dataset(n_in=6,
-                             directory='../../data/df-6-day-imputed-no-outliers-all-features-all-users-with-subject'
-                                       '-injected.pkl',
-                             granularity='1D')
-
-    # Hourly granularity datasets
-    create_and_store_dataset(n_in=1*24,
-                             directory='../../data/df-1*24-all-features-all-users-with-subject-injected.pkl',
-                             granularity='1H')
-    create_and_store_dataset(n_in=2*24,
-                             directory='../../data/df-2*24-all-features-all-users-with-subject-injected.pkl',
-                             granularity='1H')
-    create_and_store_dataset(n_in=3*24,
-                             directory='../../data/df-3*24-all-features-all-users-with-subject-injected.pkl',
-                             granularity='1H')
-    create_and_store_dataset(n_in=4*24,
-                             directory='../../data/df-4*24-all-features-all-users-with-subject-injected.pkl',
-                             granularity='1H')
-    create_and_store_dataset(n_in=5*24,
-                             directory='../../data/df-5*24-all-features-all-users-with-subject-injected.pkl',
-                             granularity='1H')
-
-    # Daily granularity datasets. Note that lag observations here are 1, 2, 3, etc. because we resample and aggregate
+    # Daily granularity datasets with imputation and no outlier values.
+    # Note that lag observations here are 1, 2, 3, etc. because we resample and aggregate
     # by day and not by hour as before.
     create_and_store_dataset(n_in=1,
-                             directory='../../data/df-1-day-all-features-all-users-with-subject-injected.pkl',
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-1-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1D')
     create_and_store_dataset(n_in=2,
-                             directory='../../data/df-2-day-all-features-all-users-with-subject-injected.pkl',
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-2-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1D')
     create_and_store_dataset(n_in=3,
-                             directory='../../data/df-3-day-all-features-all-users-with-subject-injected.pkl',
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-3-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1D')
     create_and_store_dataset(n_in=4,
-                             directory='../../data/df-4-day-all-features-all-users-with-subject-injected.pkl',
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-4-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1D')
     create_and_store_dataset(n_in=5,
-                             directory='../../data/df-5-day-all-features-all-users-with-subject-injected.pkl',
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-5-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+                             granularity='1D')
+    create_and_store_dataset(n_in=6,
+                             directory=os.path.join(BASE_PATH_DAILY_DATASETS,
+                                                    'df-6-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
                              granularity='1D')
