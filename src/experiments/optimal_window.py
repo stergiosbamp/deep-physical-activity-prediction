@@ -17,19 +17,25 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.preprocessing.dataset import DatasetBuilder
-
+from src.config.directory import BASE_PATH_DAILY_DATASETS, BASE_PATH_HOURLY_DATASETS
 
 HOURLY_WINDOWS = [
     1*24, 2*24, 3*24, 4*24, 5*24, 6*24
 ]
 
 HOURLY_DATASET_PATHS = [
-    '../../data/df-1*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-2*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-4*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-5*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-6*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-1*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-2*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-4*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-5*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_HOURLY_DATASETS,
+                 'df-6*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
 ]
 
 DAILY_WINDOWS = [
@@ -37,12 +43,18 @@ DAILY_WINDOWS = [
 ]
 
 DAILY_DATASET_PATHS = [
-    '../../data/df-1-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-2-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-3-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-4-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-5-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
-    '../../data/df-6-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl',
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-1-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-2-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-3-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-4-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-5-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
+    os.path.join(BASE_PATH_DAILY_DATASETS,
+                 'df-6-day-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'),
 ]
 
 
