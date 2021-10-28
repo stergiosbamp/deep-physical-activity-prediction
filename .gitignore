@@ -1,6 +1,9 @@
 # Data folder
-data/*.csv
-data/*.pkl
+data/synapse/*.csv
+data/synapse/*.pkl
+
+data/datasets/daily/*.pkl
+data/datasets/hourly/*.pkl
 
 # IDE configs
 .idea/
