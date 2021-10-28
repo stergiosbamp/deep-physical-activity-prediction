@@ -67,7 +67,8 @@ class DatasetBuilder:
 
             # If it's loading an existing dataset, return it without subject which can't be processed by ML models.
             if self.save_dataset:
-                dataset.drop(columns=['subject'], inplace=True)
+                if 'subject' in dataset.columns:
+                    dataset.drop(columns=['subject'], inplace=True)
         else:
             users = self.hk_database.get_all_healthkit_users()
 
