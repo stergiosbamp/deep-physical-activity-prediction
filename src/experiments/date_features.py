@@ -53,5 +53,5 @@ def only_steps_features():
 
 
 if __name__ == '__main__':
-    # only_steps_and_cyclic_features()
+    only_steps_and_cyclic_features()
     only_steps_features()
