@@ -22,8 +22,8 @@ class BaselineModel:
         self.res = dict()
 
     def score(self):
-        self.pipe.fit(X_train, y_train)
-        self.y_pred = self.pipe.predict(X_test)
+        self.pipe.fit(self.x_train, self.y_train)
+        self.y_pred = self.pipe.predict(self.x_test)
 
         self.res['r2'] = r2_score(self.y_test, self.y_pred)
         self.res['mae'] = mean_absolute_error(self.y_test, self.y_pred)
@@ -38,6 +38,9 @@ class BaselineModel:
         plt.plot(x_range, self.y_pred, label='pred')
         plt.legend()
         plt.show()
+
+    def set_pipe(self, new_pipe):
+        self.pipe = new_pipe
 
 
 if __name__ == '__main__':

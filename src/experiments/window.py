@@ -17,7 +17,9 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.preprocessing.dataset import DatasetBuilder
+from src.model.baseline import BaselineModel
 from src.config.directory import BASE_PATH_DAILY_DATASETS, BASE_PATH_HOURLY_DATASETS
+
 
 HOURLY_WINDOWS = [
     1*24, 2*24, 3*24, 4*24, 5*24, 6*24
@@ -58,9 +60,10 @@ DAILY_DATASET_PATHS = [
 ]
 
 
-def record_performance(model, windows, dataset_paths, path_results):
+def record_performance(pipe, windows, dataset_paths, path_results):
 
     if os.path.exists(path_results):
+        print("Experiment has already at {}".format(path_results))
         return
 
     results = {}
@@ -75,18 +78,11 @@ def record_performance(model, windows, dataset_paths, path_results):
 
         X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
 
-        # fit/predict
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-
-        # scoring
-        r2 = r2_score(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
-        mape = mean_absolute_percentage_error(y_test, y_pred)
-        median_ae = median_absolute_error(y_test, y_pred)
+        baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
+        baseline_ml.set_pipe(pipe)
 
         # record
-        results[window] = {"r2": r2, "mae": mae, "mape": mape, "median_ae": median_ae}
+        results[window] = baseline_ml.score()
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')

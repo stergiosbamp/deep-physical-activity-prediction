@@ -4,6 +4,7 @@ data/synapse/*.pkl
 
 data/datasets/daily/*.pkl
 data/datasets/hourly/*.pkl
+data/datasets/variations/*.pkl
 
 # IDE configs
 .idea/
