@@ -1,8 +1,6 @@
 import os
 import pandas as pd
 
-# from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
@@ -18,9 +16,10 @@ ds_builder = DatasetBuilder(n_in=3 * 24,
                             granularity='whatever',
                             save_dataset=True,
                             directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                   'df-3*24-classification.pkl'))
+                                                   'df-3*24-classification.pkl'),
+                            classification=True)
 
-X_train, X_test, y_train, y_test = ds_builder.get_train_test(clf=True)
+X_train, X_test, y_train, y_test = ds_builder.get_train_test()
 
 pipe.fit(X_train, y_train)
 y_pred = pipe.predict(X_test)
