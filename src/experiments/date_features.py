@@ -17,7 +17,7 @@ def only_steps_and_cyclic_features():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'features/df-3*24-imputed-no-outliers-steps-and-cyclic-features.pkl'))
+                                                       'df-3*24-imputed-no-outliers-steps-and-cyclic-features.pkl'))
     X_train, X_test, y_train, y_test = ds_builder.get_train_test()
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
@@ -38,7 +38,7 @@ def only_steps_features():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'features/df-3*24-imputed-no-outliers-steps-features.pkl'))
+                                                       'df-3*24-imputed-no-outliers-steps-features.pkl'))
     X_train, X_test, y_train, y_test = ds_builder.get_train_test()
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
