@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-upper_outliers = pd.read_csv('../results/gb_hourly_imputed_upper_outliers.csv', index_col=0)
-both_outliers = pd.read_csv('../results/gb_hourly_imputed_both_outliers.csv', index_col=0)
-with_outliers = pd.read_csv('../results/gb_hourly_imputed_with_outliers.csv', index_col=0)
+upper_outliers = pd.read_csv('../results/outliers/gb_hourly_imputed_upper_outliers.csv', index_col=0)
+both_outliers = pd.read_csv('../results/outliers/gb_hourly_imputed_both_outliers.csv', index_col=0)
+with_outliers = pd.read_csv('../results/outliers/gb_hourly_imputed_with_outliers.csv', index_col=0)
 
 # r2 scores
 upper_r2 = upper_outliers.loc['r2'][0]
