@@ -17,7 +17,7 @@ def only_steps_and_cyclic_features():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-steps-and-cyclic-features-only.pkl'))
+                                                       'features/df-3*24-imputed-no-outliers-steps-and-cyclic-features.pkl'))
     X_train, X_test, y_train, y_test = ds_builder.get_train_test()
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
@@ -28,7 +28,7 @@ def only_steps_and_cyclic_features():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_steps_and_cyclic_features_only.csv')
+    df.to_csv('../../results/features/gb_hourly_steps_and_cyclic_features.csv')
 
 
 def only_steps_features():
@@ -38,7 +38,7 @@ def only_steps_features():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-steps-features-only.pkl'))
+                                                       'features/df-3*24-imputed-no-outliers-steps-features.pkl'))
     X_train, X_test, y_train, y_test = ds_builder.get_train_test()
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
@@ -49,7 +49,7 @@ def only_steps_features():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_steps_features_only.csv')
+    df.to_csv('../../results/features/gb_hourly_steps_features.csv')
 
 
 if __name__ == '__main__':
