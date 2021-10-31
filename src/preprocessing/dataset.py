@@ -25,6 +25,12 @@ class DatasetBuilder:
         total_users (Union[int, None]): The amount of users to include for the construction of the dataset. If its
             None then construct the dataset for all available users.
 
+        classification (bool): Whether to construct the dataset for a 5-class classification problem based on:
+            "Tudor-Locke, Catrine, et al. "How many steps/day are enough?
+            For adults." International Journal of Behavioral Nutrition and Physical Activity 8.1 (2011): 1-17."
+
+            By default the dataset is constructed for regression.
+
         days_in_hours (int): How many days to use as lag for the sliding window. It's expressed in hours.
             1 day = 24 hours.
 
@@ -40,12 +46,14 @@ class DatasetBuilder:
     """
 
     def __init__(self, n_in, granularity, save_dataset=True, directory='../../data/df_dataset_all_users.pkl',
-                 total_users=None):
+                 total_users=None, classification=False):
         self.n_in = n_in
         self.granularity = granularity
         self.save_dataset = save_dataset
         self.directory = Path(directory)
         self.total_users = total_users
+        self.classification = classification
+
         self.days_in_hours = self.n_in if self.n_in % 24 == 0 else self.n_in * 24
 
         self.users_included = 0
@@ -125,6 +133,13 @@ class DatasetBuilder:
             # Re-sort based on the dates due to the mix of the different subjects
             dataset.sort_index(inplace=True)
 
+            # Regression or classification
+            if self.classification:
+                # Create the class
+                dataset['class'] = dataset['var1(t)'].apply(lambda x: self._regression_to_clf(x))
+                # Drop the continuous target
+                dataset.drop(columns=['var1(t)'], inplace=True)
+
             if self.save_dataset:
                 # Save dataset into 'data' directory to run ML experiments without
                 # requiring the whole preprocessing
@@ -137,6 +152,8 @@ class DatasetBuilder:
 
         Args:
             ratio (float): The ratio for training/testing.
+            clf (bool): Whether to return train/test splits for classification
+
 
         Returns:
             (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The x_train, x_test, y_train,
@@ -145,8 +162,12 @@ class DatasetBuilder:
 
         dataset = self.create_dataset()
 
-        y = dataset['var1(t)']
-        X = dataset.drop(columns=['var1(t)'])
+        if self.classification:
+            y = dataset['class']
+            X = dataset.drop(columns=['class'])
+        else:
+            y = dataset['var1(t)']
+            X = dataset.drop(columns=['var1(t)'])
 
         # Split into train and test with respect to the chronological order
         total_examples = dataset.shape[0]
@@ -162,3 +183,16 @@ class DatasetBuilder:
 
     def time_series_cv(self):
         pass
+
+    @staticmethod
+    def _regression_to_clf(x):
+        if x < 5000:
+            return 1
+        elif 5000 <= x < 7500:
+            return 2
+        elif 7500 <= x < 10000:
+            return 3
+        elif 10000 <= x < 12500:
+            return 4
+        else:
+            return 5
