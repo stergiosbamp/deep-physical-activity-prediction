@@ -147,7 +147,7 @@ class Preprocessor:
 
         if keep_only_sin_cos_transforms:
             self.df.drop(columns=[
-                'dayofweek', 'week', 'month', 'day', 'hour'
+                'dayofweek', 'week', 'month', 'year', 'day', 'hour'
             ], inplace=True)
 
         return self

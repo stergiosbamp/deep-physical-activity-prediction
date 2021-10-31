@@ -30,7 +30,7 @@ def removing_upper_outliers():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_imputed_upper_outliers.csv')
+    df.to_csv('../../results/outliers/gb_hourly_imputed_upper_outliers.csv')
 
     # plot
     baseline_ml.plot_predictions()
@@ -56,7 +56,7 @@ def removing_all_outliers():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_imputed_both_outliers.csv')
+    df.to_csv('../../results/outliers/gb_hourly_imputed_both_outliers.csv')
 
     # plot
     baseline_ml.plot_predictions()
@@ -82,7 +82,7 @@ def keep_outliers():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_imputed_with_outliers.csv')
+    df.to_csv('../../results/outliers/gb_hourly_imputed_with_outliers.csv')
 
     # plot
     baseline_ml.plot_predictions()

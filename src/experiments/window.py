@@ -94,21 +94,21 @@ if __name__ == '__main__':
     ridge_pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
 
     record_performance(ridge_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/ridge_hourly_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/ridge_hourly_windows_performance-imputed-no-outliers.csv')
     record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/ridge_daily_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/ridge_daily_windows_performance-imputed-no-outliers.csv')
 
     # Tree model
     trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
     record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/tree_hourly_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/tree_hourly_windows_performance-imputed-no-outliers.csv')
     record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/tree_daily_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/tree_daily_windows_performance-imputed-no-outliers.csv')
 
     # Ensemble model
     gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
 
     record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/gb_hourly_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/gb_hourly_windows_performance-imputed-no-outliers.csv')
     record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/gb_daily_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/gb_daily_windows_performance-imputed-no-outliers.csv')

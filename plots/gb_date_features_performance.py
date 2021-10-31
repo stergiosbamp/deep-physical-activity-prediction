@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-df_all = pd.read_csv('../results/gb_hourly_windows_performance-imputed-no-outliers.csv', index_col=0)
+df_all = pd.read_csv('../results/window/gb_hourly_windows_performance-imputed-no-outliers.csv', index_col=0)
 
 steps_date_cyclic = df_all.loc[72]
 
 # The rest are pd.Series and not pd.DataFrames
-steps_cyclic_only = pd.read_csv('../results/gb_hourly_steps_and_cyclic_features_only.csv', index_col=0)
-steps_only = pd.read_csv('../results/gb_hourly_steps_features_only.csv', index_col=0)
+steps_cyclic_only = pd.read_csv('../results/features/gb_hourly_steps_and_cyclic_features.csv', index_col=0)
+steps_only = pd.read_csv('../results/features/gb_hourly_steps_features.csv', index_col=0)
 
 # r2 scores
 both_dates_cyclic_r2 = steps_date_cyclic.loc['r2']
