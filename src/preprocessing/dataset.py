@@ -192,7 +192,7 @@ class DatasetBuilder:
             (pd.DataFrame): The supervised dataset with the steps features only.
         """
 
-        dataset = self.create_dataset()
+        dataset = self.create_dataset_all_features()
         dataset = dataset.filter(regex='var1\(t.+')
         return dataset
 
@@ -206,7 +206,7 @@ class DatasetBuilder:
             (pd.DataFrame): The supervised dataset with the steps and cyclic features only.
         """
 
-        dataset = self.create_dataset()
+        dataset = self.create_dataset_all_features()
         to_remove = []
         for t in range(self.n_in, 0, -1):
             for var in range(2, 8):
@@ -231,7 +231,7 @@ class DatasetBuilder:
             (pd.DataFrame): The supervised dataset with the steps and date features only.
         """
 
-        dataset = self.create_dataset()
+        dataset = self.create_dataset_all_features()
         to_remove = []
         for t in range(self.n_in, 0, -1):
             for var in range(8, 18):
