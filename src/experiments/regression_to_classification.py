@@ -20,7 +20,8 @@ def all_features():
                                                        'df-3*24-classification.pkl'),
                                 classification=True)
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     pipe.fit(X_train, y_train)
     y_pred = pipe.predict(X_test)
@@ -28,7 +29,8 @@ def all_features():
     report = classification_report(y_test, y_pred, output_dict=True)
 
     df = pd.DataFrame.from_dict(report).transpose()
-    df.to_csv('../../results/clf_decision_trees_hourly_classification_all_features.csv', float_format='%.3f')
+    df.to_csv('../../results/classification/clf_decision_trees_hourly_classification_all_features.csv',
+              float_format='%.3f')
 
 
 if __name__ == '__main__':

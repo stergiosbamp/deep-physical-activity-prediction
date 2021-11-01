@@ -19,7 +19,8 @@ def removing_upper_outliers():
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
                                                        'df-3*24-imputed-upper-outliers.pkl'))
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(pipe)
@@ -45,7 +46,8 @@ def removing_all_outliers():
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
                                                        'df-3*24-imputed-both-outliers.pkl'))
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(pipe)
@@ -71,7 +73,8 @@ def keep_outliers():
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
                                                        'df-3*24-imputed-with-outliers.pkl'))
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(pipe)
