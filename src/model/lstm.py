@@ -10,7 +10,7 @@ from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.loggers.csv_logs import CSVLogger
 
 from src.preprocessing.dataset import DatasetBuilder
-from src.config.directory import BASE_PATH_VARIATION_DATASETS
+from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 
 
 class TimeseriesDataset(Dataset):
@@ -53,9 +53,11 @@ class TimeseriesDataModule(pl.LightningDataModule):
         ds_builder = DatasetBuilder(n_in=3 * 24,
                                     granularity='whatever',
                                     save_dataset=True,
-                                    directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                           'df-3*24-imputed-no-outliers-steps-features.pkl'))
-        x_train, x_test, y_train, y_test = ds_builder.get_train_test()
+                                    directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                           'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
+
+        dataset = ds_builder.create_dataset_steps_features()
+        x_train, x_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
         if stage == 'fit' or stage is None:
             self.x_train = x_train
@@ -186,6 +188,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(
         max_epochs=p['max_epochs'],
+        fast_dev_run=True,
         logger=csv_logger,
         progress_bar_refresh_rate=2,
     )
