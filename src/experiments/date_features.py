@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.model.baseline import BaselineModel
 from src.preprocessing.dataset import DatasetBuilder
-from src.config.directory import BASE_PATH_VARIATION_DATASETS
+from src.config.directory import BASE_PATH_HOURLY_DATASETS
 
 
 def only_steps_and_cyclic_features():
@@ -16,9 +16,10 @@ def only_steps_and_cyclic_features():
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-imputed-no-outliers-steps-and-cyclic-features.pkl'))
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                       'df-3*24-imputed-no-outliers-steps-features.pkl'))
+    dataset = ds_builder.create_dataset_steps_cyclic_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(gb_pipe)
@@ -37,9 +38,10 @@ def only_steps_features():
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
+                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
                                                        'df-3*24-imputed-no-outliers-steps-features.pkl'))
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_steps_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(gb_pipe)

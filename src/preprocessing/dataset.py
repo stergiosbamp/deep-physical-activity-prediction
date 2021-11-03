@@ -61,10 +61,11 @@ class DatasetBuilder:
         self.window = Window(n_in=self.n_in)
         self.hk_database = HealthKitDatabase()
 
-    def create_dataset(self):
+    def create_dataset_all_features(self):
         """
         Function that creates the dataset using sliding and/or tumbling window for aggregated predictions.
         It iterates over every users' data and applies the appropriate data cleaning operations.
+        The final dataset contains both date and cyclic features.
 
         Returns:
             (pd.DataFrame): The dataset as a DataFrame.
@@ -146,21 +147,18 @@ class DatasetBuilder:
                 dataset.to_pickle(self.directory.__str__())
         return dataset
 
-    def get_train_test(self, ratio=0.75):
+    def get_train_test(self, dataset, ratio=0.75):
         """
         Returns train and test data respecting the chronological order of the time series dataset.
 
         Args:
+            dataset (pd.DataFrame): The dataset to split.
             ratio (float): The ratio for training/testing.
-            clf (bool): Whether to return train/test splits for classification
-
 
         Returns:
             (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The x_train, x_test, y_train,
                 y_test sub-datasets.
         """
-
-        dataset = self.create_dataset()
 
         if self.classification:
             y = dataset['class']
@@ -183,6 +181,70 @@ class DatasetBuilder:
 
     def time_series_cv(self):
         pass
+
+    def create_dataset_steps_features(self):
+        """
+        Function that filters from the original dataset that contains both steps + date + cyclic features,
+        only the steps features.
+        Filters only the "var1" features which refer to date features.
+
+        Returns:
+            (pd.DataFrame): The supervised dataset with the steps features only.
+        """
+
+        dataset = self.create_dataset_all_features()
+        dataset = dataset.filter(regex='var1\(t.+')
+        return dataset
+
+    def create_dataset_steps_cyclic_features(self):
+        """
+        Function that filters from the original dataset that contains both steps + date + cyclic features,
+        only the steps and cyclic features.
+        Removes the date features which are "var2" to "var7".
+
+        Returns:
+            (pd.DataFrame): The supervised dataset with the steps and cyclic features only.
+        """
+
+        dataset = self.create_dataset_all_features()
+        to_remove = []
+        for t in range(self.n_in, 0, -1):
+            for var in range(2, 8):
+                feature = "var{}(t-{})".format(var, t)
+                to_remove.append(feature)
+
+        # and current features
+        for var in range(2, 8):
+            feature = "var{}(t)".format(var)
+            to_remove.append(feature)
+
+        dataset = dataset.drop(columns=to_remove, axis=1)
+        return dataset
+
+    def create_dataset_steps_date_features(self):
+        """
+        Function that filters from the original dataset that contains both steps + date + cyclic features,
+        only the steps and date features.
+        Removes the cyclic features which are "var8" to "var17".
+
+        Returns:
+            (pd.DataFrame): The supervised dataset with the steps and date features only.
+        """
+
+        dataset = self.create_dataset_all_features()
+        to_remove = []
+        for t in range(self.n_in, 0, -1):
+            for var in range(8, 18):
+                feature = "var{}(t-{})".format(var, t)
+                to_remove.append(feature)
+
+        # and current features
+        for var in range(8, 18):
+            feature = "var{}(t)".format(var)
+            to_remove.append(feature)
+
+        dataset = dataset.drop(columns=to_remove, axis=1)
+        return dataset
 
     @staticmethod
     def _regression_to_clf(x):

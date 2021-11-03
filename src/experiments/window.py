@@ -76,7 +76,8 @@ def record_performance(pipe, windows, dataset_paths, path_results):
                                          directory=dataset_path,
                                          total_users=None)
 
-        X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
+        dataset = dataset_builder.create_dataset_all_features()
+        X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
 
         baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
         baseline_ml.set_pipe(pipe)

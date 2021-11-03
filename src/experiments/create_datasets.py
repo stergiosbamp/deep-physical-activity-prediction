@@ -16,7 +16,7 @@ def create_and_store_dataset(n_in, directory, granularity):
 
     dataset_builder = DatasetBuilder(n_in=n_in, granularity=granularity, save_dataset=True, directory=directory,
                                      total_users=None)
-    dataset_builder.create_dataset()
+    dataset_builder.create_dataset_all_features()
     print("Users discarded {} due to not enough {} records".format(dataset_builder.users_discarded, n_in))
 
 

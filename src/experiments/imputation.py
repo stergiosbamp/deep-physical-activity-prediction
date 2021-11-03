@@ -19,7 +19,8 @@ def no_imputation():
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
                                                        'df-3*24-not-imputed-no-outliers.pkl'))
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(pipe)
@@ -30,7 +31,7 @@ def no_imputation():
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_not_imputed_no_outliers.csv')
+    df.to_csv('../../results/imputation/gb_hourly_not_imputed_no_outliers.csv')
 
 
 def with_imputation():
@@ -42,7 +43,8 @@ def with_imputation():
                                 directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
                                                        'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
 
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test()
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
     baseline_ml.set_pipe(pipe)
@@ -53,7 +55,7 @@ def with_imputation():
 
     # # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/gb_hourly_imputed_no_outliers.csv')
+    df.to_csv('../../results/imputation/gb_hourly_imputed_no_outliers.csv')
 
 
 if __name__ == '__main__':
