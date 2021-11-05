@@ -4,11 +4,11 @@ import torch.nn as nn
 import pytorch_lightning as pl
 
 from pytorch_lightning import Trainer, seed_everything
-from pytorch_lightning.loggers.csv_logs import CSVLogger
+from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from src.model.dl.datamodule import TimeSeriesDataModule
-from src.config.directory import LOGS_DIR
+from torchmetrics import R2Score
 
 
 class LSTMRegressor(pl.LightningModule):
@@ -31,6 +31,8 @@ class LSTMRegressor(pl.LightningModule):
         self.criterion = criterion
         self.learning_rate = learning_rate
 
+        self.r2 = R2Score()
+
         self.lstm = nn.LSTM(input_size=n_features,
                             hidden_size=hidden_size,
                             num_layers=num_layers,
@@ -47,6 +49,7 @@ class LSTMRegressor(pl.LightningModule):
 
         out, _ = self.lstm(x)
         out = self.fc(out)
+        out = self.relu(out)
         out = self.fc2(out)
 
         # reshape back to be compatible with the true values' shape
@@ -59,24 +62,27 @@ class LSTMRegressor(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = self.criterion(y_hat, y)
-        self.log('train_loss', loss)
-        return loss
+        l1_loss = self.criterion(y_hat, y)
+        r2_loss = self.r2(y_hat, y)
+        perf = {"MAE": l1_loss, "R2": r2_loss}
+        self.log("perf", perf)
+        return l1_loss
 
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = self.criterion(y_hat, y)
-        self.log('test_loss', loss)
-        return loss
+        l1_loss = self.criterion(y_hat, y)
+        r2_loss = self.r2(y_hat, y)
+        perf = {"MAE": l1_loss, "R2": r2_loss}
+        self.log("perf", perf)
+        return l1_loss
 
 
 if __name__ == '__main__':
     p = dict(
-        seq_len=72,
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=10,
+        max_epochs=1,
         n_features=72,
         hidden_size=100,
         num_layers=1,
@@ -87,14 +93,11 @@ if __name__ == '__main__':
 
     seed_everything(1)
 
-    csv_logger = CSVLogger(save_dir=os.path.join(LOGS_DIR, 'LSTM')),
-
     trainer = Trainer(
         max_epochs=p['max_epochs'],
         fast_dev_run=False,
-        logger=csv_logger,
-        progress_bar_refresh_rate=2,
-        callbacks=[EarlyStopping(monitor="train_loss")]
+        logger=TensorBoardLogger("tb_logs", name="my_model"),
+        progress_bar_refresh_rate=2
     )
 
     model = LSTMRegressor(
