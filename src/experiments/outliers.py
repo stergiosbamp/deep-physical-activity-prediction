@@ -1,11 +1,11 @@
 import os
 import pandas as pd
 
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from src.model.baseline import BaselineModel
+from src.model.ml.baseline import BaselineModel
 from src.preprocessing.dataset import DatasetBuilder
 from src.config.directory import BASE_PATH_VARIATION_DATASETS
 
