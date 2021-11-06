@@ -73,7 +73,7 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=1,
+        max_epochs=30,
         n_features=72,
         hidden_size=100,
         num_layers=1,
