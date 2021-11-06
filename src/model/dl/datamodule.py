@@ -12,9 +12,8 @@ from src.model.dl.dataset import TimeSeriesDataset
 
 
 class TimeSeriesDataModule(pl.LightningDataModule):
-    def __init__(self, seq_len=1, batch_size=128, num_workers=0):
+    def __init__(self, batch_size=128, num_workers=0):
         super().__init__()
-        self.seq_len = seq_len
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.x_train = None
@@ -26,12 +25,12 @@ class TimeSeriesDataModule(pl.LightningDataModule):
         pass
 
     def setup(self, stage=None):
-        if stage == 'fit' and self.x_train is not None:
-            return
-        if stage == 'test' and self.x_test is not None:
-            return
-        if stage is None and self.x_train is not None and self.x_test is not None:
-            return
+        # if stage == 'fit' and self.x_train is not None:
+        #     return
+        # if stage == 'test' and self.x_test is not None:
+        #     return
+        # if stage is None and self.x_train is not None and self.x_test is not None:
+        #     return
 
         ds_builder = DatasetBuilder(n_in=3 * 24,
                                     granularity='whatever',

@@ -12,19 +12,10 @@ from torchmetrics import R2Score
 
 
 class LSTMRegressor(pl.LightningModule):
-    def __init__(self,
-                 n_features,
-                 hidden_size,
-                 seq_len,
-                 batch_size,
-                 num_layers,
-                 dropout,
-                 learning_rate,
-                 criterion):
+    def __init__(self, n_features, hidden_size, batch_size, num_layers, dropout, learning_rate, criterion):
         super(LSTMRegressor, self).__init__()
         self.n_features = n_features
         self.hidden_size = hidden_size
-        self.seq_len = seq_len
         self.batch_size = batch_size
         self.num_layers = num_layers
         self.dropout = dropout
@@ -103,7 +94,6 @@ if __name__ == '__main__':
     model = LSTMRegressor(
         n_features=p['n_features'],
         hidden_size=p['hidden_size'],
-        seq_len=p['seq_len'],
         batch_size=p['batch_size'],
         criterion=p['criterion'],
         num_layers=p['num_layers'],
@@ -112,7 +102,6 @@ if __name__ == '__main__':
     )
 
     dm = TimeSeriesDataModule(
-        seq_len=p['seq_len'],
         batch_size=p['batch_size'],
         num_workers=p['num_workers']
     )
