@@ -17,7 +17,7 @@ if __name__ == '__main__':
         max_epochs=30,
         n_features=72,
         hidden_size=100,
-        num_layers=1,
+        num_layers=3,
         dropout=0.2,
         learning_rate=0.001,
         num_workers=4
@@ -25,8 +25,7 @@ if __name__ == '__main__':
 
     # Load PyTorch model
     loaded = LSTMRegressor.load_from_checkpoint(
-        '/home/stergios/Development/MSc/Thesis/deep-physical-activity-prediction/src'
-        '/model/tb_logs/my_model/version_24/checkpoints/epoch=29-step=7559.ckpt',
+        '../lightning_logs/version_0/checkpoints/epoch=29-step=7559.ckpt',
         n_features=p['n_features'],
         hidden_size=p['hidden_size'],
         batch_size=p['batch_size'],
@@ -34,6 +33,9 @@ if __name__ == '__main__':
         num_layers=p['num_layers'],
         dropout=p['dropout'],
         learning_rate=p['learning_rate'])
+
+    # Important: set it to evaluation mode
+    loaded.eval()
 
     # Get the dataset to get the same train/test splits
     ds_builder = DatasetBuilder(n_in=3 * 24,
