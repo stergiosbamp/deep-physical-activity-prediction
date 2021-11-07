@@ -72,6 +72,8 @@ class DatasetBuilder:
         """
 
         if self.save_dataset and self.directory.exists():
+            print("Loading dataset: {}".format(str(self.directory)))
+
             dataset = pd.read_pickle(self.directory.__str__())
 
             # If it's loading an existing dataset, return it without subject which can't be processed by ML models.
