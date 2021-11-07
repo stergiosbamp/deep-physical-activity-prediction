@@ -1,12 +1,10 @@
 import matplotlib.pyplot as plt
-import os
 import torch
 
-from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error
+from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error, mean_absolute_percentage_error
 from sklearn.preprocessing import MinMaxScaler
 
 from src.model.dl.lstm import LSTMRegressor
-from src.config.directory import BASE_PATH_HOURLY_DATASETS
 from src.preprocessing.dataset import DatasetBuilder
 
 
@@ -31,6 +29,7 @@ class Evaluator:
         print("MAE", mean_absolute_error(self.y_test, self.y_pred))
         print("R2", r2_score(self.y_test, self.y_pred))
         print("MdAE", median_absolute_error(self.y_test, self.y_pred))
+        print("MAPE", mean_absolute_percentage_error(self.y_test, self.y_pred))
 
     def plot(self):
         x_range = self.y_test.index
@@ -59,6 +58,6 @@ if __name__ == '__main__':
     evaluator = Evaluator(x_test=x_test,
                           y_test=y_test,
                           model=LSTMRegressor,
-                          checkpoint_path='../lightning_logs/version_6/checkpoints/epoch=9-step=2519.ckpt')
+                          checkpoint_path='../lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
     evaluator.evaluate()
     evaluator.plot()

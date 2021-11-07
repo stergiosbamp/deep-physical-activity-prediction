@@ -3,7 +3,8 @@ import torch
 import torch.nn as nn
 import pytorch_lightning as pl
 
-from pytorch_lightning import Trainer, seed_everything
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
 from src.config.directory import BASE_PATH_HOURLY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
@@ -80,7 +81,7 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=4,
+        max_epochs=30,
         n_features=X_train.shape[1],
         hidden_size=100,
         num_layers=3,
@@ -110,8 +111,12 @@ if __name__ == '__main__':
         learning_rate=p['learning_rate']
     )
 
+    model_checkpoint = ModelCheckpoint(
+        filename='3-stack-LSTM-R2'
+    )
+
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'])
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint])
 
     trainer.fit(model, dm)
     trainer.test(model, dm)
