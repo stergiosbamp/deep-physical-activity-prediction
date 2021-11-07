@@ -29,8 +29,8 @@ class LSTMRegressor(pl.LightningModule):
                             num_layers=num_layers,
                             dropout=dropout,
                             batch_first=True)
-        self.fc = nn.Linear(hidden_size, int(hidden_size/2))
-        self.fc2 = nn.Linear(int(hidden_size/2), 1)
+        self.fc = nn.Linear(hidden_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, 1)
         self.relu = nn.ReLU()
 
     def forward(self, x):
