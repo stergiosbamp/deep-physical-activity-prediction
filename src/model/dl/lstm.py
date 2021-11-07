@@ -4,10 +4,10 @@ import torch.nn as nn
 import pytorch_lightning as pl
 
 from pytorch_lightning import Trainer, seed_everything
-from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
+from src.config.directory import BASE_PATH_HOURLY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
+from src.preprocessing.dataset import DatasetBuilder
 
 
 class LSTMRegressor(pl.LightningModule):
@@ -63,11 +63,23 @@ class LSTMRegressor(pl.LightningModule):
 
 
 if __name__ == '__main__':
+    pl.seed_everything(1)
+
+    # Create dataset
+    ds_builder = DatasetBuilder(n_in=3*24,
+                                granularity='whatever',
+                                save_dataset=True,
+                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
+                                                       'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
+
+    dataset = ds_builder.create_dataset_steps_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
+
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=30,
-        n_features=72,
+        max_epochs=3,
+        n_features=X_train.shape[1],
         hidden_size=100,
         num_layers=3,
         dropout=0.2,
@@ -75,10 +87,17 @@ if __name__ == '__main__':
         num_workers=4
     )
 
-    seed_everything(1)
+    # Init Data Module
+    dm = TimeSeriesDataModule(
+        x_train=X_train,
+        x_test=X_test,
+        y_train=y_train,
+        y_test=y_test,
+        batch_size=p['batch_size'],
+        num_workers=p['num_workers']
+    )
 
-    trainer = Trainer(max_epochs=p['max_epochs'])
-
+    # Init PyTorch model
     model = LSTMRegressor(
         n_features=p['n_features'],
         hidden_size=p['hidden_size'],
@@ -89,10 +108,8 @@ if __name__ == '__main__':
         learning_rate=p['learning_rate']
     )
 
-    dm = TimeSeriesDataModule(
-        batch_size=p['batch_size'],
-        num_workers=p['num_workers']
-    )
+    # Trainer
+    trainer = Trainer(max_epochs=p['max_epochs'])
 
     trainer.fit(model, dm)
-    trainer.test(model, datamodule=dm)
+    trainer.test(model, dm)
