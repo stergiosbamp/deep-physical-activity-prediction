@@ -51,7 +51,8 @@ if __name__ == '__main__':
                                                '-all-users-with-subject-injected.pkl',
                                      total_users=None)
 
-    X_train, X_test, y_train, y_test = dataset_builder.get_train_test()
+    dataset = dataset_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
 
