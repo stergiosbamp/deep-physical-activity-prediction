@@ -13,6 +13,8 @@ from src.preprocessing.dataset import DatasetBuilder
 class LSTMRegressor(pl.LightningModule):
     def __init__(self, n_features, hidden_size, batch_size, num_layers, dropout, learning_rate, criterion):
         super(LSTMRegressor, self).__init__()
+        self.save_hyperparameters()
+
         self.n_features = n_features
         self.hidden_size = hidden_size
         self.batch_size = batch_size
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=3,
+        max_epochs=4,
         n_features=X_train.shape[1],
         hidden_size=100,
         num_layers=3,
