@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
-from src.config.directory import BASE_PATH_HOURLY_DATASETS
+from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
 from src.preprocessing.dataset import DatasetBuilder
 
@@ -29,8 +29,8 @@ class LSTMRegressor(pl.LightningModule):
                             num_layers=num_layers,
                             dropout=dropout,
                             batch_first=True)
-        self.fc = nn.Linear(hidden_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, 1)
+        self.fc = nn.Linear(hidden_size, int(hidden_size/2))
+        self.fc2 = nn.Linear(int(hidden_size/2), 1)
         self.relu = nn.ReLU()
 
     def forward(self, x):
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     )
 
     model_checkpoint = ModelCheckpoint(
-        filename='3-stack-LSTM-R2'
+        filename='3-stack-LSTM'
     )
 
     # Trainer

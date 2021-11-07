@@ -1,9 +1,13 @@
+import os
+
 import matplotlib.pyplot as plt
 import torch
+import pandas as pd
 
 from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error, mean_absolute_percentage_error
 from sklearn.preprocessing import MinMaxScaler
 
+from src.config.directory import BASE_PATH_DAILY_DATASETS
 from src.model.dl.lstm import LSTMRegressor
 from src.preprocessing.dataset import DatasetBuilder
 
@@ -31,8 +35,14 @@ class Evaluator:
         print("MdAE", median_absolute_error(self.y_test, self.y_pred))
         print("MAPE", mean_absolute_percentage_error(self.y_test, self.y_pred))
 
-    def plot(self):
+    def plot(self, smooth=False):
         x_range = self.y_test.index
+        if smooth:
+            df_preds = pd.DataFrame(self.y_pred)
+            df_trues = pd.DataFrame(self.y_test)
+            self.y_pred = df_preds.rolling(200).mean().values
+            self.y_test = df_trues.rolling(200).mean().values
+
         plt.plot(x_range, self.y_test, label='true')
         plt.plot(x_range, self.y_pred, label='pred')
         plt.legend()
@@ -60,4 +70,4 @@ if __name__ == '__main__':
                           model=LSTMRegressor,
                           checkpoint_path='../lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
     evaluator.evaluate()
-    evaluator.plot()
+    evaluator.plot(smooth=True)
