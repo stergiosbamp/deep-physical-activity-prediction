@@ -25,10 +25,14 @@ class CNNRegressor(pl.LightningModule):
         self.learning_rate = learning_rate
 
         self.dropout = nn.Dropout(p=dropout)
-        self.conv = nn.Conv1d(in_channels=self.n_features,
-                              out_channels=self.out_channels,
-                              kernel_size=kernel,
-                              padding=padding)
+        self.conv1 = nn.Conv1d(in_channels=self.n_features,
+                               out_channels=self.out_channels,
+                               kernel_size=kernel,
+                               padding=padding)
+        self.conv2 = nn.Conv1d(in_channels=self.out_channels,
+                               out_channels=self.out_channels,
+                               kernel_size=kernel,
+                               padding=padding)
         self.max_pool = nn.MaxPool1d(kernel_size=kernel)
         self.fc = nn.Linear(self.out_channels, hidden_size)
         self.fc2 = nn.Linear(hidden_size, 1)
@@ -37,7 +41,11 @@ class CNNRegressor(pl.LightningModule):
     def forward(self, x):
         # 3D for conv
         x = x.unsqueeze(2)
-        x = self.conv(x)
+        x = self.conv1(x)
+        x = self.max_pool(x)
+        x = self.dropout(x)
+
+        x = self.conv2(x)
         x = self.max_pool(x)
         x = self.dropout(x)
 
