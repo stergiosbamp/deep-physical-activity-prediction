@@ -12,32 +12,40 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 class CNNRegressor(pl.LightningModule):
-    def __init__(self, n_features, hidden_size, batch_size, num_layers, dropout, learning_rate, criterion):
+    def __init__(self, n_features, out_channels, hidden_size, batch_size, dropout, learning_rate,
+                 criterion, kernel, padding):
         super(CNNRegressor, self).__init__()
         self.save_hyperparameters()
 
         self.n_features = n_features
+        self.out_channels = out_channels
         self.hidden_size = hidden_size
         self.batch_size = batch_size
-        self.num_layers = num_layers
-        self.dropout = dropout
         self.criterion = criterion
         self.learning_rate = learning_rate
 
-        self.conv = nn.Conv1d(in_channels=self.n_features, out_channels=64, kernel_size=1)
-        self.max_pool = nn.MaxPool1d(1)
-
-        self.fc = nn.Linear(64, hidden_size)
+        self.dropout = nn.Dropout(p=dropout)
+        self.conv = nn.Conv1d(in_channels=self.n_features,
+                              out_channels=self.out_channels,
+                              kernel_size=kernel,
+                              padding=padding)
+        self.max_pool = nn.MaxPool1d(kernel_size=kernel)
+        self.fc = nn.Linear(self.out_channels, hidden_size)
         self.fc2 = nn.Linear(hidden_size, 1)
         self.relu = nn.ReLU()
 
     def forward(self, x):
+        # 3D for conv
         x = x.unsqueeze(2)
         x = self.conv(x)
         x = self.max_pool(x)
+        x = self.dropout(x)
+
+        # restore shape for feed-forward layers
         x = x.view(x.shape[0], x.shape[1])
         x = self.fc(x)
         x = self.relu(x)
+        x = self.dropout(x)
         x = self.fc2(x)
         return x
 
@@ -75,10 +83,12 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=8,
+        max_epochs=20,
         n_features=X_train.shape[1],
+        out_channels=64,
+        kernel=3,
+        padding=2,
         hidden_size=100,
-        num_layers=3,
         dropout=0.2,
         learning_rate=0.001,
         num_workers=4
@@ -97,12 +107,14 @@ if __name__ == '__main__':
     # Init PyTorch model
     model = CNNRegressor(
         n_features=p['n_features'],
+        out_channels=p['out_channels'],
         hidden_size=p['hidden_size'],
         batch_size=p['batch_size'],
         criterion=p['criterion'],
-        num_layers=p['num_layers'],
         dropout=p['dropout'],
-        learning_rate=p['learning_rate']
+        learning_rate=p['learning_rate'],
+        kernel=p['kernel'],
+        padding=p['padding']
     )
 
     model_checkpoint = ModelCheckpoint(
