@@ -9,6 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from src.config.directory import BASE_PATH_DAILY_DATASETS
 from src.model.dl.lstm import LSTMRegressor
+from src.model.dl.cnn import CNNRegressor
 from src.preprocessing.dataset import DatasetBuilder
 
 
@@ -67,7 +68,7 @@ if __name__ == '__main__':
 
     evaluator = Evaluator(x_test=x_test,
                           y_test=y_test,
-                          model=LSTMRegressor,
-                          checkpoint_path='../lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
+                          model=CNNRegressor,
+                          checkpoint_path='lightning_logs/version_44/checkpoints/CNN-v1.ckpt')
     evaluator.evaluate()
-    evaluator.plot(smooth=True)
+    evaluator.plot(smooth=False)
