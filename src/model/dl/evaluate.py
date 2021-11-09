@@ -55,8 +55,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3 * 24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/hourly/df-3*24-imputed-no-outliers-all-features-all'
-                                          '-users-with-subject-injected.pkl')
+                                directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     x_train, x_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -71,4 +70,4 @@ if __name__ == '__main__':
                           model=CNNRegressor,
                           checkpoint_path='lightning_logs/version_44/checkpoints/CNN-v1.ckpt')
     evaluator.evaluate()
-    evaluator.plot(smooth=False)
+    evaluator.plot(smooth=True)
