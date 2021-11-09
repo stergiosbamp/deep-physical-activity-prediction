@@ -8,7 +8,7 @@ from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error
 from sklearn.preprocessing import MinMaxScaler
 
 from src.config.directory import BASE_PATH_DAILY_DATASETS
-from src.model.dl.lstm import LSTMRegressor
+from src.model.dl.mlp import MLPRegressor
 from src.preprocessing.dataset import DatasetBuilder
 
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     evaluator = Evaluator(x_test=x_test,
                           y_test=y_test,
-                          model=LSTMRegressor,
-                          checkpoint_path='lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
+                          model=MLPRegressor,
+                          checkpoint_path='lightning_logs/version_17/checkpoints/3-layer-MLP-v1.ckpt')
     evaluator.evaluate()
     evaluator.plot(smooth=True)
