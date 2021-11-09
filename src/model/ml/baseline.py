@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from sklearn.linear_model import SGDRegressor, Ridge
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
@@ -32,9 +33,14 @@ class BaselineModel:
 
         return self.res
 
-    def plot_predictions(self):
-        x_range = self.x_test.index
-        plt.plot(x_range, self.y_test.values, label='true')
+    def plot_predictions(self, smooth=False):
+        x_range = self.y_test.index
+        if smooth:
+            df_preds = pd.DataFrame(self.y_pred)
+            df_trues = pd.DataFrame(self.y_test)
+            self.y_pred = df_preds.rolling(200).mean().values
+            self.y_test = df_trues.rolling(200).mean().values
+        plt.plot(x_range, self.y_test, label='true')
         plt.plot(x_range, self.y_pred, label='pred')
         plt.legend()
         plt.show()
@@ -44,11 +50,10 @@ class BaselineModel:
 
 
 if __name__ == '__main__':
-    dataset_builder = DatasetBuilder(n_in=5*24,
-                                     granularity='1H',
+    dataset_builder = DatasetBuilder(n_in=3*24,
+                                     granularity='whatever',
                                      save_dataset=True,
-                                     directory='../../data/datasets/daily/df-3-day-imputed-no-outliers-all-features'
-                                               '-all-users-with-subject-injected.pkl',
+                                     directory='../../../data/datasets/variations/df-3*24-not-imputed-no-outliers.pkl',
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()
@@ -59,4 +64,4 @@ if __name__ == '__main__':
     scores = baseline_ml.score()
     print(scores)
 
-    baseline_ml.plot_predictions()
+    baseline_ml.plot_predictions(smooth=True)

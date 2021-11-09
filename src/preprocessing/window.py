@@ -82,12 +82,7 @@ class Window:
             (pd.DataFrame): The dataset with output ('var1(t)' column) the aggregated steps count.
         """
 
-        # find offset
-        offset = data.index[0].hour
-        offset_str = str(offset) + "H"
-
-        # resample by offset, so days doesn't necessarily start from 00:00 (midnight)
-        agg_stepscount = data['var1(t)'.format(self.n_in)].resample(rule=freq, offset=offset_str).sum()
+        agg_stepscount = data['var1(t)'.format(self.n_in)].resample(rule=freq).sum()
 
         # drop hourly predictions
         data.drop(columns=['var1(t)'], inplace=True)

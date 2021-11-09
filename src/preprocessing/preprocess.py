@@ -32,10 +32,7 @@ class Preprocessor:
         if self.df.empty:
             return self
 
-        offset = self.df['startTime'].iloc[0].hour
-        offset_str = str(offset) + "H"
-
-        self.df = self.df.resample(rule=frequency, on='startTime', offset=offset_str).sum()
+        self.df = self.df.resample(rule=frequency, on='startTime').sum()
         return self
 
     def remove_outlier_dates(self):
