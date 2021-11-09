@@ -110,10 +110,10 @@ class DatasetBuilder:
                     if self.users_included >= self.total_users:
                         break  # stop gathering records
 
-                preprocessor \
-                    .impute_zeros() \
-                    .add_date_features() \
-                    .add_sin_cos_features(keep_only_sin_cos_transforms=True)
+                # preprocessor \
+                    # .impute_zeros() \
+                    # .add_date_features() \
+                    # .add_sin_cos_features(keep_only_sin_cos_transforms=False)
 
                 df = preprocessor.df
                 df = self.window.to_supervised_dataset(df)
