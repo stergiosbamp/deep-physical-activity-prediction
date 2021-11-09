@@ -54,8 +54,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3 * 24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/hourly/df-3*24-imputed-no-outliers-all-features-all'
-                                          '-users-with-subject-injected.pkl')
+                                directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     x_train, x_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -68,6 +67,6 @@ if __name__ == '__main__':
     evaluator = Evaluator(x_test=x_test,
                           y_test=y_test,
                           model=LSTMRegressor,
-                          checkpoint_path='../lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
+                          checkpoint_path='lightning_logs/version_0/checkpoints/3-stack-LSTM-v1.ckpt')
     evaluator.evaluate()
     evaluator.plot(smooth=True)

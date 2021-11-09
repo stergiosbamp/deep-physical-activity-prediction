@@ -72,8 +72,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
-                                                       'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
+                                directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -81,12 +80,12 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.L1Loss(),
-        max_epochs=30,
+        max_epochs=10,
         n_features=X_train.shape[1],
         hidden_size=100,
         num_layers=3,
         dropout=0.2,
-        learning_rate=0.001,
+        learning_rate=0.01,
         num_workers=4
     )
 

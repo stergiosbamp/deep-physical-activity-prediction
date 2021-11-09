@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from sklearn.linear_model import SGDRegressor, Ridge
+from sklearn.linear_model import SGDRegressor, Ridge, LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
 from sklearn.pipeline import make_pipeline
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     dataset_builder = DatasetBuilder(n_in=3*24,
                                      granularity='whatever',
                                      save_dataset=True,
-                                     directory='../../../data/datasets/variations/df-3*24-not-imputed-no-outliers.pkl',
+                                     directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl',
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()
