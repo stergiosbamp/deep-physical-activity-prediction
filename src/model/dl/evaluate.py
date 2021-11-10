@@ -25,7 +25,7 @@ class Evaluator:
         self.model.eval()
 
         # Inference from PyTorch model and get predictions as numpy array
-        y_pred = self.model(torch.from_numpy(x_test).float())
+        y_pred = self.model(torch.from_numpy(self.x_test).float())
         y_pred = y_pred.detach().numpy()
 
         self.y_pred = y_pred
