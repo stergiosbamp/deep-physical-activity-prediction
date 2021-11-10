@@ -70,7 +70,7 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.MSELoss(),
-        max_epochs=30,
+        max_epochs=15,
         n_features=X_train.shape[1],
         hidden_size=100,
         dropout=0.2,
