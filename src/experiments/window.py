@@ -85,18 +85,17 @@ if __name__ == '__main__':
                        '../../results/no-offset/ridge_hourly_windows.csv')
     record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
                        '../../results/no-offset/ridge_daily_windows.csv')
-    exit()
-    # Tree model
-    trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
-    record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/window/tree_hourly_windows_performance-imputed-no-outliers.csv')
-    record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/window/tree_daily_windows_performance-imputed-no-outliers.csv')
+    # # Tree model
+    # trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
+    # record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+    #                    '../../results/window/tree_hourly_windows_performance-imputed-no-outliers.csv')
+    # record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+    #                    '../../results/window/tree_daily_windows_performance-imputed-no-outliers.csv')
 
     # Ensemble model
     gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
 
     record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/window/gb_hourly_windows_performance-imputed-no-outliers.csv')
+                       '../../results/no-offset/gb_hourly_windows.csv')
     record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/window/gb_daily_windows_performance-imputed-no-outliers.csv')
+                       '../../results/no-offset/gb_daily_windows.csv')
