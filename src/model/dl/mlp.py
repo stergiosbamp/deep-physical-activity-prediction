@@ -62,14 +62,14 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl')
+                                directory='../../../data/datasets/no-offset/df-3*24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     p = dict(
         batch_size=128,
-        criterion=nn.L1Loss(),
+        criterion=nn.MSELoss(),
         max_epochs=30,
         n_features=X_train.shape[1],
         hidden_size=100,
