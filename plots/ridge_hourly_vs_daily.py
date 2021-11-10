@@ -24,7 +24,7 @@ df = pd.concat([df_daily, df_hourly])
 
 fig, ax = plt.subplots(1, 2, figsize=(15, 10))
 
-fig.suptitle('Gradient Boosting Regressor')
+fig.suptitle('Ridge Regressor')
 sns.barplot(data=df, x='window', y='median_ae', hue='granularity', ax=ax[0])
 sns.barplot(data=df, x='window', y='r2', hue='granularity', ax=ax[1])
 
