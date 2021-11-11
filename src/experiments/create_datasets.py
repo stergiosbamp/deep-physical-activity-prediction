@@ -23,22 +23,22 @@ def create_and_store_dataset(n_in, directory, granularity):
 if __name__ == '__main__':
     # Hourly granularity datasets with imputation and no outlier values
     create_and_store_dataset(n_in=1 * 24,
-                             directory='../../data/datasets/no-offset/df-1*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-1*24-just-steps.pkl',
                              granularity='1H')
     create_and_store_dataset(n_in=2 * 24,
-                             directory='../../data/datasets/no-offset/df-2*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-2*24-just-steps.pkl',
                              granularity='1H')
     create_and_store_dataset(n_in=3 * 24,
-                             directory='../../data/datasets/no-offset/df-3*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-3*24-just-steps.pkl',
                              granularity='1H')
     create_and_store_dataset(n_in=4 * 24,
-                             directory='../../data/datasets/no-offset/df-4*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-4*24-just-steps.pkl',
                              granularity='1H')
     create_and_store_dataset(n_in=5 * 24,
-                             directory='../../data/datasets/no-offset/df-5*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-5*24-just-steps.pkl',
                              granularity='1H')
     create_and_store_dataset(n_in=6 * 24,
-                             directory='../../data/datasets/no-offset/df-6*24-just-steps.pkl',
+                             directory='../../data/datasets/hourly-daily-chopped/df-6*24-just-steps.pkl',
                              granularity='1H')
 
     # Daily granularity datasets with imputation and no outlier values.

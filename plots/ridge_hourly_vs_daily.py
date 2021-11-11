@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-df_hourly = pd.read_csv('../results/no-offset/ridge_hourly_windows.csv', index_col=0)
+df_hourly = pd.read_csv('../results/hourly-daily-chopped/ridge_hourly_windows.csv', index_col=0)
 df_daily = pd.read_csv('../results/no-offset/ridge_daily_windows.csv', index_col=0)
 
 # Set the window as 1, 2, .., 6 days instead of hours to be grouped under the same column

@@ -25,12 +25,12 @@ HOURLY_WINDOWS = [
 ]
 
 HOURLY_DATASET_PATHS = [
-    '../../data/datasets/no-offset/df-1*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-2*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-3*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-4*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-5*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-6*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-1*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-2*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-3*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-4*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-5*24-just-steps.pkl',
+    '../../data/datasets/hourly-daily-chopped/df-6*24-just-steps.pkl',
 ]
 
 DAILY_WINDOWS = [
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     ridge_pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
 
     record_performance(ridge_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/no-offset/ridge_hourly_windows.csv')
+                       '../../results/hourly-daily-chopped/ridge_hourly_windows.csv')
     record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
                        '../../results/no-offset/ridge_daily_windows.csv')
     # # Tree model
@@ -93,9 +93,9 @@ if __name__ == '__main__':
     #                    '../../results/window/tree_daily_windows_performance-imputed-no-outliers.csv')
 
     # Ensemble model
-    gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
-
-    record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/no-offset/gb_hourly_windows.csv')
-    record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/no-offset/gb_daily_windows.csv')
+    # gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
+    #
+    # record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+    #                    '../../results/no-offset/gb_hourly_windows.csv')
+    # record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+    #                    '../../results/no-offset/gb_daily_windows.csv')
