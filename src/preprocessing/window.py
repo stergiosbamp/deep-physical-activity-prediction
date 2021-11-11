@@ -100,4 +100,4 @@ class Window:
 
         data.at[end_date:, 'var1(t)'] = agg_stepscount[end_date]
 
-        return data[::self.n_in]
+        return data[::24]
