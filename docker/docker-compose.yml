@@ -7,6 +7,7 @@ services:
     container_name: mongodb
     restart: unless-stopped
     environment:
+        MONGODB_DATABASE: deep_physical_activity_prediction_db
         ALLOW_EMPTY_PASSWORD: "yes"
     volumes: 
         - 'mongodb_data:/bitnami/mongodb'

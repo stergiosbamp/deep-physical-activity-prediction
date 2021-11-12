@@ -30,13 +30,14 @@ For the sake of simplicity this repository contains a `docker-compose.yml`
 file that provides easy setup of a required mongo database in order to
 download and store the data from the "MyHeart Counts" study.
 
-**Spin up the database**
+### Spin up the database
+
 ```
 $ cd docker/
 $ docker-compose up -d
 ```
 
-**Export collection for backup**
+### Export collection for backup
 
 * Exec inside container as root
 `docker exec -it --user root mongodb bash`
@@ -45,11 +46,20 @@ $ docker-compose up -d
 `$ mongodump --gzip --db=deep_physical_activity_prediction_db --collection=healthkit_stepscount_singles`
 * Exit container `$ exit`
 
-Copy from inside the container the binary files to the computer
-`$ docker cp  mongodb:/dump/deep_physical_activity_prediction_db/ .`
+Copy from inside the container the binary files to your computer's desired path.
 
-**Import collection into a new database from backup**
-* Spin up a new database with the following `docker-compose.yml` file
+`$ cd DESIRED/PATH/`
+
+`$ docker cp mongodb:/dump/deep_physical_activity_prediction_db/ .`
+
+### Import collection into a new database from backup
+
+In case you want the data ready to be imported in a database and to be used for data pre-processing and model building,
+and overcome the step of download, request them from contributors of this GitHub repository.
+
+* Spin up a **new** database with the following `docker-compose.yml` file. Note that the exposed port is different
+* to void conflicts in case a MongoDB already runs in port 27017.
+
 ``` 
 version: '3.1'
 
@@ -59,6 +69,7 @@ services:
     image: bitnami/mongodb
     container_name: mongodb-backup
     environment:
+        MONGODB_DATABASE: deep_physical_activity_prediction_db
         ALLOW_EMPTY_PASSWORD: "yes"
     volumes: 
         - 'mongodb_data_backup:/bitnami/mongodb'
@@ -100,4 +111,7 @@ $ python importer.py
 ```
 
 This merges the embedded data for each user and 
-stores them in the `healthkit_stepscound_singles` collection.
+stores them in a clean `healthkit_stepscount_singles` collection.
+This is the main collection and source of data of the project, that all data pre-processing and ML/DL model building
+is based upon.
+
