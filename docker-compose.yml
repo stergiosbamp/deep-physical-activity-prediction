@@ -26,3 +26,5 @@ services:
 
 volumes: 
     mongodb_data:
+      external:
+        name: "docker_mongodb_data"
