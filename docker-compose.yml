@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+
+  app:
+    build: .
+    container_name: python-app
+    restart: unless-stopped
+    environment:
+      SYNAPSE_USER: ${SYNAPSE_USER}
+      SYNAPSE_PASSWORD: ${SYNAPSE_PASSWORD}
+      MONGODB_HOST: ${MONGODB_HOST}
+      MONGODB_PORT: ${MONGODB_PORT}
+
+  mongodb:
+    image: bitnami/mongodb
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGODB_DATABASE: deep_physical_activity_prediction_db
+      ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - 'mongodb_data:/bitnami/mongodb'
+    ports:
+      - "27017:27017"
+
+volumes: 
+    mongodb_data:
