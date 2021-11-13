@@ -1,3 +1,5 @@
+import os
+
 from pymongo import MongoClient
 from pymongo.database import Collection
 
@@ -14,7 +16,9 @@ class Database:
     DATABASE_NAME = 'deep_physical_activity_prediction_db'
 
     def __init__(self):
-        self.client = MongoClient('localhost', 27017)
+        host = os.getenv("MONGODB_HOST")
+        port = os.getenv("MONGODB_PORT")
+        self.client = MongoClient(host, int(port))
         self.database = self.client.get_database(self.DATABASE_NAME)
 
     def get_or_create_collection(self, collection):
