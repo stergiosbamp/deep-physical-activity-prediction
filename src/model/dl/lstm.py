@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
+import settings
 from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
 from src.preprocessing.dataset import DatasetBuilder
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint])
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=settings.GPU)
 
     trainer.fit(model, dm)
     trainer.test(model, dm)

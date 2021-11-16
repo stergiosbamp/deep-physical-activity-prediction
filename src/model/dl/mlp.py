@@ -103,7 +103,7 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint])
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=settings.GPU)
 
     trainer.fit(model, dm)
     trainer.test(model, dm)
