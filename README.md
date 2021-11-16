@@ -28,7 +28,10 @@ $ pip install -r requirements.txt
 
 For the sake of simplicity this repository contains a `docker-compose.yml`
 file that provides easy setup of a required MongoDB database in order to
-download and store the data from the "MyHeart Counts" study.
+download and store the data from the "MyHeart Counts" study. 
+
+It also builds and spins up a python container that can be used to run all the data processing and ML/DL modeling, assuring consistency
+in results.
 
 In case you want the data ready to be imported in a database and to be used for data pre-processing and model building,
 and skip the step of downloading, request them from contributors of this GitHub repository.
@@ -36,10 +39,9 @@ Then follow the instructions of how to import the data.
 
 ### Spin up the database
 
-The following docker-compose file sets up a default database named `deep_physical_activity_prediction`.  
+The following command sets up a default database named `deep_physical_activity_prediction`.  
 ```
-$ cd docker/
-$ docker-compose up -d
+$ docker-compose up -d mongodb
 ```
 
 ### Import data
