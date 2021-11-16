@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
+import settings
 from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
 from src.preprocessing.dataset import DatasetBuilder
@@ -80,9 +81,9 @@ if __name__ == '__main__':
 
     # Create dataset
     ds_builder = DatasetBuilder(n_in=3*24,
-                                granularity='whatever',
+                                granularity='1H',
                                 save_dataset=True,
-                                directory='../../../data/datasets/hourly/df-3*24-imputed-no-outliers-all-features-all'
+                                directory='../../../data/datasets/hourly/df-3x24-imputed-no-outliers-all-features-all'
                                           '-users-with-subject-injected.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
@@ -130,7 +131,7 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint])
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=settings.GPU)
 
     trainer.fit(model, dm)
     trainer.test(model, dm)

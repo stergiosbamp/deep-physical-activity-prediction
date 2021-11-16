@@ -59,7 +59,7 @@ class DatasetBuilder:
         self.users_included = 0
         self.users_discarded = 0
         self.window = Window(n_in=self.n_in)
-        self.hk_database = HealthKitDatabase()
+        self.hk_database = HealthKitDatabase(27018)
 
     def create_dataset_all_features(self):
         """

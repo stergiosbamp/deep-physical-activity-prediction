@@ -25,12 +25,12 @@ HOURLY_WINDOWS = [
 ]
 
 HOURLY_DATASET_PATHS = [
-    '../../data/datasets/no-offset/df-1*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-2*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-3*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-4*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-5*24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-6*24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-1x24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-2x24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-3x24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-4x24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-5x24-just-steps.pkl',
+    '../../data/datasets/no-offset/df-6x24-just-steps.pkl',
 ]
 
 DAILY_WINDOWS = [

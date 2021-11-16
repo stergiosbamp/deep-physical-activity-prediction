@@ -13,8 +13,8 @@ class Database:
 
     DATABASE_NAME = 'deep_physical_activity_prediction_db'
 
-    def __init__(self):
-        self.client = MongoClient('localhost', 27017)
+    def __init__(self, port):
+        self.client = MongoClient('localhost', port)
         self.database = self.client.get_database(self.DATABASE_NAME)
 
     def get_or_create_collection(self, collection):
@@ -61,8 +61,8 @@ class HealthKitDatabase(Database):
 
     HEALTHKIT_STEPSCOUNT_COLLECTION = 'healthkit_stepscount_singles'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, port):
+        super().__init__(port)
         self.healthkit_collection = self.database.get_collection(self.HEALTHKIT_STEPSCOUNT_COLLECTION)
 
     def get_all_healthkit_users(self):
