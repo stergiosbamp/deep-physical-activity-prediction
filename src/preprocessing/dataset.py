@@ -4,6 +4,7 @@ from sklearn.model_selection import TimeSeriesSplit
 from pathlib import Path
 from tqdm import tqdm
 
+import settings
 from src.preprocessing.window import Window
 from src.preprocessing.preprocess import Preprocessor
 from src.data.database import HealthKitDatabase
@@ -59,7 +60,7 @@ class DatasetBuilder:
         self.users_included = 0
         self.users_discarded = 0
         self.window = Window(n_in=self.n_in)
-        self.hk_database = HealthKitDatabase(27018)
+        self.hk_database = HealthKitDatabase(settings.MONGO_PORT)
 
     def create_dataset_all_features(self):
         """
