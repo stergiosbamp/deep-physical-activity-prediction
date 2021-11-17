@@ -17,7 +17,7 @@ def all_features():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-classification.pkl'),
+                                                       'df-3x24-classification.pkl'),
                                 classification=True)
 
     dataset = ds_builder.create_dataset_all_features()

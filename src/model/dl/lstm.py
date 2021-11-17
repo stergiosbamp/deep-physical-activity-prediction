@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
+import settings
 from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 from src.model.dl.datamodule import TimeSeriesDataModule
 from src.preprocessing.dataset import DatasetBuilder
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl')
+                                directory='../../../data/datasets/variations/df-3x24-no-offset-no-imputed-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint])
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=settings.GPU)
 
     trainer.fit(model, dm)
     trainer.test(model, dm)

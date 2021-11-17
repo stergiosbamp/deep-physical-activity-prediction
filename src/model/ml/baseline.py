@@ -53,7 +53,7 @@ if __name__ == '__main__':
     dataset_builder = DatasetBuilder(n_in=3*24,
                                      granularity='whatever',
                                      save_dataset=True,
-                                     directory='../../../data/datasets/variations/df-3*24-no-offset-no-imputed-just-steps.pkl',
+                                     directory='../../../data/datasets/variations/df-3x24-no-offset-no-imputed-just-steps.pkl',
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()

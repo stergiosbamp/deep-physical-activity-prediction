@@ -17,7 +17,7 @@ def removing_upper_outliers():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-imputed-upper-outliers.pkl'))
+                                                       'df-3x24-imputed-upper-outliers.pkl'))
 
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -44,7 +44,7 @@ def removing_all_outliers():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-imputed-both-outliers.pkl'))
+                                                       'df-3x24-imputed-both-outliers.pkl'))
 
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -71,7 +71,7 @@ def keep_outliers():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-imputed-with-outliers.pkl'))
+                                                       'df-3x24-imputed-with-outliers.pkl'))
 
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)

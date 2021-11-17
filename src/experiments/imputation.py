@@ -17,7 +17,7 @@ def no_imputation():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_VARIATION_DATASETS,
-                                                       'df-3*24-not-imputed-no-outliers.pkl'))
+                                                       'df-3x24-not-imputed-no-outliers.pkl'))
 
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -41,7 +41,7 @@ def with_imputation():
                                 granularity='whatever',
                                 save_dataset=True,
                                 directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
-                                                       'df-3*24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
+                                                       'df-3x24-imputed-no-outliers-all-features-all-users-with-subject-injected.pkl'))
 
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)

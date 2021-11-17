@@ -65,8 +65,8 @@ class HealthKitDatabase(Database):
 
     HEALTHKIT_STEPSCOUNT_COLLECTION = 'healthkit_stepscount_singles'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, port):
+        super().__init__(port)
         self.healthkit_collection = self.database.get_collection(self.HEALTHKIT_STEPSCOUNT_COLLECTION)
 
     def get_all_healthkit_users(self):
