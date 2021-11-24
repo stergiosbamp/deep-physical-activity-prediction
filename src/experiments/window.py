@@ -25,12 +25,12 @@ HOURLY_WINDOWS = [
 ]
 
 HOURLY_DATASET_PATHS = [
-    '../../data/datasets/no-offset/df-1x24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-2x24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-3x24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-4x24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-5x24-just-steps.pkl',
-    '../../data/datasets/no-offset/df-6x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-1x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-2x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-3x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-4x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-5x24-just-steps.pkl',
+    '../../data/datasets/hourly/df-6x24-just-steps.pkl',
 ]
 
 DAILY_WINDOWS = [
@@ -38,12 +38,12 @@ DAILY_WINDOWS = [
 ]
 
 DAILY_DATASET_PATHS = [
-    '../../data/datasets/no-offset/df-1-day-just-steps.pkl',
-    '../../data/datasets/no-offset/df-2-day-just-steps.pkl',
-    '../../data/datasets/no-offset/df-3-day-just-steps.pkl',
-    '../../data/datasets/no-offset/df-4-day-just-steps.pkl',
-    '../../data/datasets/no-offset/df-5-day-just-steps.pkl',
-    '../../data/datasets/no-offset/df-6-day-just-steps.pkl',
+    '../../data/datasets/daily/df-1-day-just-steps.pkl',
+    '../../data/datasets/daily/df-2-day-just-steps.pkl',
+    '../../data/datasets/daily/df-3-day-just-steps.pkl',
+    '../../data/datasets/daily/df-4-day-just-steps.pkl',
+    '../../data/datasets/daily/df-5-day-just-steps.pkl',
+    '../../data/datasets/daily/df-6-day-just-steps.pkl',
 ]
 
 
@@ -82,20 +82,20 @@ if __name__ == '__main__':
     ridge_pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
 
     record_performance(ridge_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/no-offset/ridge_hourly_windows.csv')
+                       '../../results/window/ridge_hourly_windows.csv')
     record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/no-offset/ridge_daily_windows.csv')
-    # # Tree model
-    # trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
-    # record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-    #                    '../../results/window/tree_hourly_windows_performance-imputed-no-outliers.csv')
-    # record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-    #                    '../../results/window/tree_daily_windows_performance-imputed-no-outliers.csv')
+                       '../../results/window/ridge_daily_windows.csv')
+    # Tree model
+    trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
+    record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+                       '../../results/window/tree_hourly_windows.csv')
+    record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+                       '../../results/window/tree_daily_windows.csv')
 
     # Ensemble model
     gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
 
     record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
-                       '../../results/no-offset/gb_hourly_windows.csv')
+                       '../../results/window/gb_hourly_windows.csv')
     record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
-                       '../../results/no-offset/gb_daily_windows.csv')
+                       '../../results/window/gb_daily_windows.csv')
