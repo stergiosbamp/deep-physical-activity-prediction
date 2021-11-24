@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
@@ -10,50 +10,61 @@ from src.preprocessing.dataset import DatasetBuilder
 from src.config.directory import BASE_PATH_HOURLY_DATASETS
 
 
-def only_steps_and_cyclic_features():
-    gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
-
+def all_features():
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
-                                                       'df-3x24-imputed-no-outliers-steps-features.pkl'))
+                                directory='../../data/datasets/variations/df-3x24-all-features.pkl')
+    dataset = ds_builder.create_dataset_all_features()
+    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
+
+    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
+
+    # record
+    results = baseline_ml.score()
+
+    # write them to csv
+    df = pd.DataFrame.from_dict(results, orient='index')
+    df.to_csv('../../results/features/ridge_all_features.csv')
+
+
+def only_steps_and_cyclic_features():
+    ds_builder = DatasetBuilder(n_in=3*24,
+                                granularity='whatever',
+                                save_dataset=True,
+                                directory='../../data/datasets/variations/df-3x24-all-features.pkl')
     dataset = ds_builder.create_dataset_steps_cyclic_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-    baseline_ml.set_pipe(gb_pipe)
 
     # record
     results = baseline_ml.score()
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/features/gb_hourly_steps_and_cyclic_features.csv')
+    df.to_csv('../../results/features/ridge_steps_cyclic.csv')
 
 
 def only_steps_features():
-    gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
-
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory=os.path.join(BASE_PATH_HOURLY_DATASETS,
-                                                       'df-3x24-imputed-no-outliers-steps-features.pkl'))
+                                directory='../../data/datasets/variations/df-3x24-all-features.pkl')
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-    baseline_ml.set_pipe(gb_pipe)
 
     # record
     results = baseline_ml.score()
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
-    df.to_csv('../../results/features/gb_hourly_steps_features.csv')
+    df.to_csv('../../results/features/ridge_steps_only.csv')
 
 
 if __name__ == '__main__':
+    all_features()
     only_steps_and_cyclic_features()
     only_steps_features()
