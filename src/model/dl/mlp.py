@@ -62,7 +62,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/no-offset/df-3x24-just-steps.pkl')
+                                directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
