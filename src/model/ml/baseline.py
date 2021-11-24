@@ -8,7 +8,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.preprocessing.dataset import DatasetBuilder
-from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 
 
 class BaselineModel:

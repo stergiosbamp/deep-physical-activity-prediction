@@ -1,5 +1,3 @@
-import os
-
 import matplotlib.pyplot as plt
 import torch
 import pandas as pd
@@ -7,7 +5,6 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error, mean_absolute_percentage_error
 from sklearn.preprocessing import MinMaxScaler
 
-from src.config.directory import BASE_PATH_DAILY_DATASETS
 from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor
 from src.model.dl.mlp import MLPRegressor
