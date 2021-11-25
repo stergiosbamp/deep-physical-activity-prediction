@@ -65,10 +65,10 @@ class Preprocessor:
         self.df = self.df[(self.df["value"] < q_hi) & (self.df["value"] > q_low)]
         return self
 
-    def impute_zeros(self, start_hour=12, end_hour=21):
+    def impute_zeros(self, start_hour=8, end_hour=24):
         """
         Imputes zero steps values in specific times using the interpolation method.
-        By default it imputes zeros between 12:00 PM to 21:00PM. If there are data between this time period, and
+        By default it imputes zeros between 08:00 to 24:00. If there are data between this time period, and
         zeros too, then interpolates those zeros.
         The intuition is not to impute every zero since the zero values in the midnight and first morning hours are
         realistic.
