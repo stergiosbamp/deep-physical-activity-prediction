@@ -1,5 +1,3 @@
-import os
-
 import matplotlib.pyplot as plt
 import torch
 import pandas as pd
@@ -7,7 +5,6 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, r2_score, median_absolute_error, mean_absolute_percentage_error
 from sklearn.preprocessing import MinMaxScaler
 
-from src.config.directory import BASE_PATH_DAILY_DATASETS
 from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor
 from src.model.dl.mlp import MLPRegressor
@@ -56,7 +53,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3 * 24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/no-offset/df-3x24-just-steps.pkl')
+                                directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     x_train, x_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)

@@ -1,12 +1,7 @@
-import os
 import pytorch_lightning as pl
 
 from torch.utils.data import DataLoader
-
 from sklearn.preprocessing import MinMaxScaler
-
-from src.preprocessing.dataset import DatasetBuilder
-from src.config.directory import BASE_PATH_HOURLY_DATASETS, BASE_PATH_DAILY_DATASETS
 
 from src.model.dl.dataset import TimeSeriesDataset
 

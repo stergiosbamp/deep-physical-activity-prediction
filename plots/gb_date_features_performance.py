@@ -3,21 +3,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-df_all = pd.read_csv('../results/window/gb_hourly_windows_performance-imputed-no-outliers.csv', index_col=0)
-
-steps_date_cyclic = df_all.loc[72]
-
-# The rest are pd.Series and not pd.DataFrames
-steps_cyclic_only = pd.read_csv('../results/features/gb_hourly_steps_and_cyclic_features.csv', index_col=0)
-steps_only = pd.read_csv('../results/features/gb_hourly_steps_features.csv', index_col=0)
+all_features = pd.read_csv('../results/features/ridge_all_features.csv', index_col=0)
+steps_cyclic_only = pd.read_csv('../results/features/ridge_steps_cyclic.csv', index_col=0)
+steps_only = pd.read_csv('../results/features/ridge_steps_only.csv', index_col=0)
 
 # r2 scores
-both_dates_cyclic_r2 = steps_date_cyclic.loc['r2']
+both_dates_cyclic_r2 = all_features.loc['r2'][0]
 only_cyclic_r2 = steps_cyclic_only.loc['r2'][0]
 steps_only_r2 = steps_only.loc['r2'][0]
 
 # median_ae scores
-both_dates_cyclic_median = steps_date_cyclic.loc['median_ae']
+both_dates_cyclic_median = all_features.loc['median_ae'][0]
 only_cyclic_median = steps_cyclic_only.loc['median_ae'][0]
 steps_only_median = steps_only.loc['median_ae'][0]
 

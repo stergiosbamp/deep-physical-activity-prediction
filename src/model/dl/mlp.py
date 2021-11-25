@@ -1,4 +1,3 @@
-import os
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
@@ -8,6 +7,7 @@ from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 
 from src.model.dl.datamodule import TimeSeriesDataModule
 from src.preprocessing.dataset import DatasetBuilder
+from src.config.settings import GPU
 
 
 class MLPRegressor(pl.LightningModule):
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/no-offset/df-3x24-just-steps.pkl')
+                                directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=settings.GPU)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
 
     trainer.fit(model, dm)
     trainer.test(model, dm)
