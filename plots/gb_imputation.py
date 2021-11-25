@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-not_imputed = pd.read_csv('../results/imputation/gb_hourly_not_imputed_no_outliers.csv', index_col=0)
-imputed = pd.read_csv('../results/imputation/gb_hourly_imputed_no_outliers.csv', index_col=0)
+not_imputed = pd.read_csv('../results/imputation/gb_no_imputation.csv', index_col=0)
+imputed = pd.read_csv('../results/imputation/gb_imputation.csv', index_col=0)
 
 # r2 scores
 not_imputed_r2 = not_imputed.loc['r2'][0]
