@@ -31,3 +31,19 @@ TABLES_EMBEDDED_DATA_COLUMN = {
     #                     'HKQuantityTypeIdentifierHeartRate_fitness.rest.items'],
     # 'six_minute_walk_displacements': 'UnknownFile_1.json.items'
 }
+
+DAILY_SOURCES = [
+    "com.beurer.connect",
+    "com.ihealthlabs.iHealth",
+    "com.ihealthlabs.iHealth02",
+    "com.mioglobal.go",
+    "com.redshiftdev.Fitbit-Health-Sync",
+    "com.runtastic.iphone",
+    "com.sunnystudio.uptrending",
+    "com.withings.wiScaleNG",
+    "mortadelanetwork.FitAllSync",
+    "mortadelanetwork.Syncbit",
+    "net.jaiyo.misfit-sync:",
+    "net.jaiyo.wristbandsync-jawboneup",
+    "org.medhelp.MyCycles"
+]

@@ -93,6 +93,7 @@ class DatasetBuilder:
 
                 preprocessor = Preprocessor(df=df_user)
                 preprocessor \
+                    .remove_daily_sources() \
                     .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
                     .remove_outlier_values(q=0.05) \
