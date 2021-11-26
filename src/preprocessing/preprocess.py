@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from src.config.synapse import DAILY_SOURCES
+
 
 class Preprocessor:
     """
@@ -14,7 +16,7 @@ class Preprocessor:
 
     def __init__(self, df):
         # Keep what we need and do some type casting
-        self.df = df[['startTime', 'value']]
+        self.df = df[['startTime', 'value', 'sourceIdentifier']]
         self.df['value'] = df['value'].astype('float64')
 
     def resample_dates(self, frequency):
@@ -170,6 +172,20 @@ class Preprocessor:
         if diff.days >= required_days:
             return True
         return False
+
+    def remove_daily_sources(self):
+        """
+        Function that removes all source identifiers that emit daily data.
+
+        Returns:
+            (self)
+        """
+        # Keep only sources that are not in the list of daily emitted sources
+        self.df = self.df[~self.df['sourceIdentifier'].isin(DAILY_SOURCES)]
+
+        # Drop column of the source identifier
+        self.df.drop(columns=['sourceIdentifier'], inplace=True)
+        return self
 
     @staticmethod
     def remove_no_wear_days(df):
