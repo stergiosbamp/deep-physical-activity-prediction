@@ -125,6 +125,9 @@ class DatasetBuilder:
                 if self.granularity == '1H':
                     df = self.window.aggregate_predictions(df)
 
+                # Remove no wear days
+                df = preprocessor.remove_no_wear_days(df)
+
                 # If the dataset is to be saved, inject user (subject) id to know which records are from
                 # whom (by sorting), if needed.
                 if self.save_dataset:

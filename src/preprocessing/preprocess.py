@@ -172,6 +172,21 @@ class Preprocessor:
         return False
 
     @staticmethod
+    def remove_no_wear_days(df):
+        """
+        Removes days that user didn't wear the tracking device.
+        Based on literature, no wear days are defined as steps less than 500.
+
+        Essentially this function keeps all user's steps that are above 500 steps.
+
+        Returns:
+            (pd.DataFrame): The DataFrame with removed the no wear days.
+        """
+
+        df = df[df['var1(t)'] >= 500.0]
+        return df
+
+    @staticmethod
     def _sin_transform(values):
         """
         Applies SIN transform to a series value.
