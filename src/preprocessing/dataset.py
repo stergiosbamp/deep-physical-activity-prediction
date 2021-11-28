@@ -92,8 +92,13 @@ class DatasetBuilder:
                 df_user = pd.DataFrame(user_data)
 
                 preprocessor = Preprocessor(df=df_user)
+                if self.granularity == '1H':
+                    # In the case of hourly resampling the daily data sources
+                    # result in 23 of 24 records with zeros.
+                    preprocessor\
+                        .remove_daily_sources()
+
                 preprocessor \
-                    .remove_daily_sources() \
                     .remove_duplicate_values_at_same_timestamp() \
                     .remove_outlier_dates() \
                     .remove_outlier_values(q=0.05) \
