@@ -183,8 +183,26 @@ class DatasetBuilder:
 
         return x_train, x_test, y_train, y_test
 
-    def time_series_cv(self):
-        pass
+    def get_train_val_test(self, dataset, val_ratio=0.2):
+        """
+        Returns train, validation and test data respecting the chronological order of the time series dataset.
+
+        It splits the initial training set into a new training and validation set.
+
+        Args:
+            dataset (pd.DataFrame): The dataset to split.
+            val_ratio (float): The ratio for the validation set.
+
+        Returns:
+            (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The
+            x_train, x_val, x_test, y_train, y_val, y_test sub-datasets.
+        """
+
+        x_train_val, x_test, y_train_val, y_test = self.get_train_test(dataset)
+
+        x_train, x_val, y_train, y_val = train_test_split(x_train_val, y_train_val, test_size=val_ratio, shuffle=False)
+
+        return x_train, x_val, x_test, y_train, y_val, y_test
 
     def create_dataset_steps_features(self):
         """
