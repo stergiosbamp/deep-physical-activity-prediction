@@ -21,17 +21,29 @@ class BaselineModel:
         self.pipe = make_pipeline(MinMaxScaler(), regressor)
 
         self.y_pred = None
-        self.res = dict()
+        self.y_pred_train = None
+        self.scores_test = dict()
+        self.scores_train = dict()
 
-    def score(self):
+    def evaluate_test(self):
         self.y_pred = self.pipe.predict(self.x_test)
 
-        self.res['R2'] = r2_score(self.y_test, self.y_pred)
-        self.res['MAE'] = mean_absolute_error(self.y_test, self.y_pred)
-        self.res['MAPE'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
-        self.res['MdAE'] = median_absolute_error(self.y_test, self.y_pred)
+        self.scores_test['R2'] = r2_score(self.y_test, self.y_pred)
+        self.scores_test['MAE'] = mean_absolute_error(self.y_test, self.y_pred)
+        self.scores_test['MAPE'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
+        self.scores_test['MdAE'] = median_absolute_error(self.y_test, self.y_pred)
 
-        return self.res
+        return self.scores_test
+
+    def evaluate_train(self):
+        self.y_pred_train = self.pipe.predict(self.x_train)
+
+        self.scores_train['R2'] = r2_score(self.y_train, self.y_pred_train)
+        self.scores_train['MAE'] = mean_absolute_error(self.y_train, self.y_pred_train)
+        self.scores_train['MAPE'] = mean_absolute_percentage_error(self.y_train, self.y_pred_train)
+        self.scores_train['MdAE'] = median_absolute_error(self.y_train, self.y_pred_train)
+
+        return self.scores_train
 
     def train_model(self):
         self.pipe.fit(self.x_train, self.y_train)
@@ -72,12 +84,17 @@ if __name__ == '__main__':
         "ridge__alpha": [1, 5, 10, 15, 20]
     }
 
-    regressor = GradientBoostingRegressor(random_state=1)
+    regressor = Ridge(random_state=1)
 
     baseline_ml = BaselineModel(X_train, X_test, y_train, y_test, regressor)
 
     baseline_ml.tune_model(grid_params=grid)
-    scores = baseline_ml.score()
-    print(scores)
 
+    scores_train = baseline_ml.evaluate_train()
+    scores_test = baseline_ml.evaluate_test()
+
+    print("Train set scores:", scores_train)
+    print("Test set scores:", scores_test)
+
+    baseline_ml.plot_predictions_train(smooth=True)
     baseline_ml.plot_predictions(smooth=True)
