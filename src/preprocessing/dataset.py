@@ -1,6 +1,6 @@
 import pandas as pd
 
-from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import train_test_split
 from pathlib import Path
 from tqdm import tqdm
 
@@ -178,15 +178,8 @@ class DatasetBuilder:
             y = dataset['var1(t)']
             X = dataset.drop(columns=['var1(t)'])
 
-        # Split into train and test with respect to the chronological order
-        total_examples = dataset.shape[0]
-        split_point = int(total_examples * ratio)
-
-        x_train = X[:split_point]
-        x_test = X[split_point:]
-
-        y_train = y[:split_point]
-        y_test = y[split_point:]
+        # Split into train and test with respect to the chronological order i.e. no shuffle
+        x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=ratio, shuffle=False)
 
         return x_train, x_test, y_train, y_test
 
