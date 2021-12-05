@@ -7,6 +7,9 @@ data/datasets/hourly/*.pkl
 data/datasets/variations/*.pkl
 data/datasets/no-offset/*.pkl
 
+# PyTorch Lightining logs
+src/model/dl/lightning_logs/
+
 # IDE configs
 .idea/
 .vscode/
