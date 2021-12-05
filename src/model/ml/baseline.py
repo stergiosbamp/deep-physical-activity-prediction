@@ -6,31 +6,41 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 
 from src.preprocessing.dataset import DatasetBuilder
 
 
 class BaselineModel:
-    def __init__(self, x_train, x_test, y_train, y_test):
+    def __init__(self, x_train, x_test, y_train, y_test, regressor):
         self.x_train = x_train
         self.x_test = x_test
         self.y_train = y_train
         self.y_test = y_test
 
-        self.pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
+        self.pipe = make_pipeline(MinMaxScaler(), regressor)
+
         self.y_pred = None
         self.res = dict()
 
     def score(self):
-        self.pipe.fit(self.x_train, self.y_train)
         self.y_pred = self.pipe.predict(self.x_test)
 
-        self.res['r2'] = r2_score(self.y_test, self.y_pred)
-        self.res['mae'] = mean_absolute_error(self.y_test, self.y_pred)
-        self.res['mape'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
-        self.res['median_ae'] = median_absolute_error(self.y_test, self.y_pred)
+        self.res['R2'] = r2_score(self.y_test, self.y_pred)
+        self.res['MAE'] = mean_absolute_error(self.y_test, self.y_pred)
+        self.res['MAPE'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
+        self.res['MdAE'] = median_absolute_error(self.y_test, self.y_pred)
 
         return self.res
+
+    def train_model(self):
+        self.pipe.fit(self.x_train, self.y_train)
+
+    def tune_model(self, grid_params):
+        tscv = TimeSeriesSplit(n_splits=5)
+        grid = GridSearchCV(self.pipe, grid_params, scoring='neg_median_absolute_error', cv=tscv, n_jobs=-1)
+        grid.fit(self.x_train, self.y_train)
+        self.pipe = grid.best_estimator_
 
     def plot_predictions(self, smooth=False):
         x_range = self.y_test.index
@@ -52,14 +62,21 @@ if __name__ == '__main__':
     dataset_builder = DatasetBuilder(n_in=3*24,
                                      granularity='whatever',
                                      save_dataset=True,
-                                     directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl',
+                                     directory='../../../data/datasets/variations/df-3x24-no-wear-days-500-just-steps.pkl',
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
 
-    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
+    grid = {
+        "ridge__alpha": [1, 5, 10, 15, 20]
+    }
 
+    regressor = GradientBoostingRegressor(random_state=1)
+
+    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test, regressor)
+
+    baseline_ml.tune_model(grid_params=grid)
     scores = baseline_ml.score()
     print(scores)
 
