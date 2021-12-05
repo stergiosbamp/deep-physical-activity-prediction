@@ -66,6 +66,18 @@ class BaselineModel:
         plt.legend()
         plt.show()
 
+    def plot_predictions_train(self, smooth=False):
+        x_range = self.y_train.index
+        if smooth:
+            df_preds = pd.DataFrame(self.y_pred_train)
+            df_trues = pd.DataFrame(self.y_train)
+            self.y_pred_train = df_preds.rolling(200).mean().values
+            self.y_train = df_trues.rolling(200).mean().values
+        plt.plot(x_range, self.y_train, label='true')
+        plt.plot(x_range, self.y_pred_train, label='pred')
+        plt.legend()
+        plt.show()
+
     def set_pipe(self, new_pipe):
         self.pipe = new_pipe
 
