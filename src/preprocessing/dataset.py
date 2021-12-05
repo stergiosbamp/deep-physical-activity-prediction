@@ -158,13 +158,13 @@ class DatasetBuilder:
                 dataset.to_pickle(self.directory.__str__())
         return dataset
 
-    def get_train_test(self, dataset, ratio=0.75):
+    def get_train_test(self, dataset, train_ratio=0.75):
         """
         Returns train and test data respecting the chronological order of the time series dataset.
 
         Args:
             dataset (pd.DataFrame): The dataset to split.
-            ratio (float): The ratio for training/testing.
+            train_ratio (float): The ratio for training/testing.
 
         Returns:
             (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The x_train, x_test, y_train,
@@ -179,7 +179,7 @@ class DatasetBuilder:
             X = dataset.drop(columns=['var1(t)'])
 
         # Split into train and test with respect to the chronological order i.e. no shuffle
-        x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=ratio, shuffle=False)
+        x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio, shuffle=False)
 
         return x_train, x_test, y_train, y_test
 
