@@ -52,16 +52,24 @@ class LSTMRegressor(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        l1_loss = self.criterion(y_hat, y)
-        self.log("loss", l1_loss)
-        return l1_loss
+        loss = self.criterion(y_hat, y)
+        self.log("train_loss", loss)
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        y_hat = y_hat.reshape(-1)
+        loss = self.criterion(y_hat, y)
+        self.log("val_loss", loss)
+        return loss
 
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        l1_loss = self.criterion(y_hat, y)
-        self.log("loss", l1_loss)
-        return l1_loss
+        loss = self.criterion(y_hat, y)
+        self.log("loss", loss)
+        return loss
 
 
 if __name__ == '__main__':
@@ -71,28 +79,30 @@ if __name__ == '__main__':
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
+                                directory='../../../data/datasets/variations/df-3x24-no-wear-days-500-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
-    X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
+    x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     p = dict(
         batch_size=128,
-        criterion=nn.L1Loss(),
-        max_epochs=10,
-        n_features=X_train.shape[1],
+        criterion=nn.MSELoss(),
+        max_epochs=30,
+        n_features=x_train.shape[1],
         hidden_size=100,
-        num_layers=3,
+        num_layers=2,
         dropout=0.2,
-        learning_rate=0.01,
+        learning_rate=0.001,
         num_workers=4
     )
 
     # Init Data Module
     dm = TimeSeriesDataModule(
-        x_train=X_train,
-        x_test=X_test,
+        x_train=x_train,
+        x_test=x_test,
+        x_val=x_val,
         y_train=y_train,
+        y_val=y_val,
         y_test=y_test,
         batch_size=p['batch_size'],
         num_workers=p['num_workers']
@@ -110,11 +120,10 @@ if __name__ == '__main__':
     )
 
     model_checkpoint = ModelCheckpoint(
-        filename='3-stack-LSTM'
+        filename='2-stack-LSTM'
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=0)
 
     trainer.fit(model, dm)
-    trainer.test(model, dm)
