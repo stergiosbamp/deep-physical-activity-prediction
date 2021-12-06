@@ -86,12 +86,12 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.MSELoss(),
-        max_epochs=30,
+        max_epochs=200,
         n_features=x_train.shape[1],
         hidden_size=100,
         num_layers=2,
         dropout=0.2,
-        learning_rate=0.001,
+        learning_rate=0.01,
         num_workers=4
     )
 
@@ -123,6 +123,6 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=0)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
 
     trainer.fit(model, dm)
