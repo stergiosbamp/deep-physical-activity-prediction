@@ -50,10 +50,10 @@ class Evaluator:
 
 if __name__ == '__main__':
     # Get the dataset to get the same train/test splits
-    ds_builder = DatasetBuilder(n_in=3 * 24,
+    ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
                                 save_dataset=True,
-                                directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
+                                directory='../../../data/datasets/variations/df-3x24-no-wear-days-500-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
     x_train, x_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
