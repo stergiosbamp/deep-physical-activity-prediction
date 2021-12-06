@@ -33,8 +33,7 @@ class CNNRegressor(pl.LightningModule):
                                kernel_size=kernel,
                                padding=padding)
         self.max_pool = nn.MaxPool1d(kernel_size=kernel)
-        self.fc = nn.Linear(self.out_channels, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, 1)
+        self.fc = nn.Linear(self.out_channels, 1)
         self.relu = nn.ReLU()
 
     def forward(self, x):
@@ -51,9 +50,6 @@ class CNNRegressor(pl.LightningModule):
         # restore shape for feed-forward layers
         x = x.view(x.shape[0], x.shape[1])
         x = self.fc(x)
-        x = self.relu(x)
-        x = self.dropout(x)
-        x = self.fc2(x)
         return x
 
     def configure_optimizers(self):
@@ -97,7 +93,7 @@ if __name__ == '__main__':
     p = dict(
         batch_size=128,
         criterion=nn.MSELoss(),
-        max_epochs=20,
+        max_epochs=100,
         n_features=x_train.shape[1],
         out_channels=64,
         kernel=3,
@@ -138,6 +134,6 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=0)
 
     trainer.fit(model, dm)
