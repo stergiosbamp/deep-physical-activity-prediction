@@ -20,7 +20,7 @@ class Evaluator:
 
     def evaluate(self):
         # Important: set it to evaluation mode
-        self.model.eval()
+        self.model.freeze()
 
         # Inference from PyTorch model and get predictions as numpy array
         y_pred = self.model(torch.from_numpy(self.x_test).float())
