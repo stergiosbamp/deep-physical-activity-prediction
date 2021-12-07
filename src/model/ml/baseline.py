@@ -9,6 +9,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 
 from src.preprocessing.dataset import DatasetBuilder
+from xgboost.sklearn import XGBRegressor
 
 
 class BaselineModel:
@@ -53,6 +54,7 @@ class BaselineModel:
         grid = GridSearchCV(self.pipe, grid_params, scoring='neg_median_absolute_error', cv=tscv, n_jobs=-1)
         grid.fit(self.x_train, self.y_train)
         self.pipe = grid.best_estimator_
+        print("Best tuned pipeline: {}".format(self.pipe))
 
     def plot_predictions(self, smooth=False):
         x_range = self.y_test.index
