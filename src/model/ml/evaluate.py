@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 
+from pathlib import Path
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error, mean_squared_error
 
 
@@ -21,6 +22,7 @@ class BaseEvaluator:
         self.scores_test = dict()
         self.scores_train = dict()
         self.scores_val = dict()
+        self.results_folder = Path("../../../results/modeling")
 
     def inference(self, data):
         raise NotImplemented("Abstract method")
@@ -86,12 +88,17 @@ class BaseEvaluator:
         plt.legend()
         plt.show()
 
-    @staticmethod
-    def _zero_prediction(x):
-        if x <= 500.0:
-            return 0
-        else:
-            return x
+    def save_results(self, scores, filename):
+        dest_path = Path(self.results_folder, filename)
+        dest_path.with_suffix(".csv")
+
+        if dest_path.exists():
+            print("Modeling results for {} has already run".format(filename))
+            return
+
+        df = pd.DataFrame.from_dict(scores, orient='index')
+        df.to_csv(dest_path.__str__())
+        print("Saved results modeling for", filename)
 
     @staticmethod
     def _zero_prediction(x):
