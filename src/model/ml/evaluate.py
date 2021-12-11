@@ -23,7 +23,7 @@ class BaseEvaluator:
         self.scores_test = dict()
         self.scores_train = dict()
         self.scores_val = dict()
-        self.results_folder = Path("../../../results/modeling")
+        self.results_folder = Path("../../results/modeling")
 
     def inference(self, data):
         raise NotImplemented("Abstract method")
