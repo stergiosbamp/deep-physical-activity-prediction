@@ -7,13 +7,14 @@ from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absol
 
 
 class BaseEvaluator:
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test):
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, zero_preds=True):
         self.x_train = x_train
         self.x_val = x_val
         self.x_test = x_test
         self.y_train = y_train
         self.y_val = y_val
         self.y_test = y_test
+        self.zero_preds = zero_preds
 
         self.y_pred = None
         self.y_pred_train = None
@@ -30,8 +31,9 @@ class BaseEvaluator:
     def evaluate_test(self):
         self.y_pred = self.inference(self.x_test)
 
-        # self.y_pred = pd.DataFrame(self.y_pred)
-        # self.y_pred = self.y_pred[0].apply(lambda x: self._zero_prediction(x))
+        if self.zero_preds:
+            self.y_pred = pd.DataFrame(self.y_pred)
+            self.y_pred = self.y_pred[0].apply(lambda x: self._zero_prediction(x))
 
         self.scores_test['R2'] = r2_score(self.y_test, self.y_pred)
         self.scores_test['MAE'] = mean_absolute_error(self.y_test, self.y_pred)
@@ -44,6 +46,10 @@ class BaseEvaluator:
     def evaluate_train(self):
         self.y_pred_train = self.inference(self.x_train)
 
+        if self.zero_preds:
+            self.y_pred_train = pd.DataFrame(self.y_pred_train)
+            self.y_pred_train = self.y_pred_train[0].apply(lambda x: self._zero_prediction(x))
+
         self.scores_train['R2'] = r2_score(self.y_train, self.y_pred_train)
         self.scores_train['MAE'] = mean_absolute_error(self.y_train, self.y_pred_train)
         self.scores_train['MAPE'] = mean_absolute_percentage_error(self.y_train, self.y_pred_train)
@@ -54,6 +60,10 @@ class BaseEvaluator:
 
     def evaluate_val(self):
         self.y_pred_val = self.inference(self.x_val)
+
+        if self.zero_preds:
+            self.y_pred_val = pd.DataFrame(self.y_pred_val)
+            self.y_pred_val = self.y_pred_val[0].apply(lambda x: self._zero_prediction(x))
 
         # Now use predictions with any metric from sklearn
         self.scores_val['R2'] = r2_score(self.y_val, self.y_pred_val)
