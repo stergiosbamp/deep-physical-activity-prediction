@@ -2,7 +2,7 @@ from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from src.model.ml.evaluate import MLEvaluator
+from src.model.ml.evaluator import MLEvaluator
 
 
 class BaselineModel:

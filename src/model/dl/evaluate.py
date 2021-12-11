@@ -4,7 +4,7 @@ from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor
 from src.model.dl.mlp import MLPRegressor
 from src.preprocessing.dataset import DatasetBuilder
-from src.model.ml.evaluate import DLEvaluator
+from src.model.ml.evaluator import DLEvaluator
 
 
 if __name__ == '__main__':
