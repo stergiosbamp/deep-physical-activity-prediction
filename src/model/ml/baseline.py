@@ -46,7 +46,7 @@ if __name__ == '__main__':
     dataset_builder = DatasetBuilder(n_in=3*24,
                                      granularity='whatever',
                                      save_dataset=True,
-                                     directory='../../../data/datasets/variations/df-3x24-no-zeros-just-steps.pkl',
+                                     directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl',
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()
@@ -72,6 +72,10 @@ if __name__ == '__main__':
     print("Train set scores:", scores_train)
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
+
+    baseline_ml.evaluator.save_results(scores_train, "ridge-train.csv")
+    baseline_ml.evaluator.save_results(scores_val, "ridge-val.csv")
+    baseline_ml.evaluator.save_results(scores_test, "ridge-test.csv")
 
     baseline_ml.evaluator.plot_predictions_train(smooth=True)
     baseline_ml.evaluator.plot_predictions(smooth=True)
