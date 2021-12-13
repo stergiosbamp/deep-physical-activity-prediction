@@ -1,66 +1,36 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-
-from sklearn.linear_model import SGDRegressor, Ridge, LinearRegression
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error
+from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
-from src.preprocessing.dataset import DatasetBuilder
+from src.model.ml.evaluator import MLEvaluator
 
 
 class BaselineModel:
-    def __init__(self, x_train, x_test, y_train, y_test):
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor):
         self.x_train = x_train
+        self.x_val = x_val
         self.x_test = x_test
         self.y_train = y_train
+        self.y_val = y_val
         self.y_test = y_test
 
-        self.pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
-        self.y_pred = None
-        self.res = dict()
+        self.pipe = make_pipeline(MinMaxScaler(), regressor)
 
-    def score(self):
+        self.evaluator = MLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test, self.pipe)
+
+    def train_model(self):
         self.pipe.fit(self.x_train, self.y_train)
-        self.y_pred = self.pipe.predict(self.x_test)
 
-        self.res['r2'] = r2_score(self.y_test, self.y_pred)
-        self.res['mae'] = mean_absolute_error(self.y_test, self.y_pred)
-        self.res['mape'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
-        self.res['median_ae'] = median_absolute_error(self.y_test, self.y_pred)
+    def tune_model(self, X, y, grid_params):
+        tscv = TimeSeriesSplit(n_splits=5)
+        grid = GridSearchCV(self.pipe, grid_params, scoring='neg_mean_absolute_error', cv=tscv, n_jobs=-1)
+        grid.fit(X, y)
 
-        return self.res
+        print("Best parameters:", grid.best_params_)
+        print("Best tuned pipeline:", grid.best_estimator_)
 
-    def plot_predictions(self, smooth=False):
-        x_range = self.y_test.index
-        if smooth:
-            df_preds = pd.DataFrame(self.y_pred)
-            df_trues = pd.DataFrame(self.y_test)
-            self.y_pred = df_preds.rolling(200).mean().values
-            self.y_test = df_trues.rolling(200).mean().values
-        plt.plot(x_range, self.y_test, label='true')
-        plt.plot(x_range, self.y_pred, label='pred')
-        plt.legend()
-        plt.show()
+        self.pipe = grid.best_estimator_
+        self.evaluator.regressor = self.pipe
 
     def set_pipe(self, new_pipe):
         self.pipe = new_pipe
-
-
-if __name__ == '__main__':
-    dataset_builder = DatasetBuilder(n_in=3*24,
-                                     granularity='whatever',
-                                     save_dataset=True,
-                                     directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl',
-                                     total_users=None)
-
-    dataset = dataset_builder.create_dataset_all_features()
-    X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
-
-    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-
-    scores = baseline_ml.score()
-    print(scores)
-
-    baseline_ml.plot_predictions(smooth=True)
