@@ -122,8 +122,8 @@ class BaseEvaluator:
 
 
 class MLEvaluator(BaseEvaluator):
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor):
-        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test)
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor, zero_preds=True):
+        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, zero_preds)
         self.regressor = regressor
 
     def inference(self, data):
@@ -131,8 +131,8 @@ class MLEvaluator(BaseEvaluator):
 
 
 class DLEvaluator(BaseEvaluator):
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, model, ckpt_path):
-        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test)
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, model, ckpt_path, zero_preds=True):
+        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, zero_preds)
         self.model = model.load_from_checkpoint(ckpt_path)
         self.model.freeze()
 
