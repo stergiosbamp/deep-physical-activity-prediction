@@ -39,7 +39,8 @@ class BaseEvaluator:
         self.scores_test['MAE'] = mean_absolute_error(self.y_test, self.y_pred)
         self.scores_test['MAPE'] = mean_absolute_percentage_error(self.y_test, self.y_pred)
         self.scores_test['MdAE'] = median_absolute_error(self.y_test, self.y_pred)
-        self.scores_test['RMSE'] = mean_squared_error(self.y_test, self.y_pred, squared=False)
+        self.scores_test['MSE'] = mean_squared_error(self.y_val, self.y_pred_val, squared=True)
+        self.scores_test['RMSE'] = mean_squared_error(self.y_train, self.y_pred_train, squared=False)
 
         return self.scores_test
 
@@ -54,6 +55,7 @@ class BaseEvaluator:
         self.scores_train['MAE'] = mean_absolute_error(self.y_train, self.y_pred_train)
         self.scores_train['MAPE'] = mean_absolute_percentage_error(self.y_train, self.y_pred_train)
         self.scores_train['MdAE'] = median_absolute_error(self.y_train, self.y_pred_train)
+        self.scores_train['MSE'] = mean_squared_error(self.y_val, self.y_pred_val, squared=True)
         self.scores_train['RMSE'] = mean_squared_error(self.y_train, self.y_pred_train, squared=False)
 
         return self.scores_train
@@ -70,7 +72,8 @@ class BaseEvaluator:
         self.scores_val['MAE'] = mean_absolute_error(self.y_val, self.y_pred_val)
         self.scores_val['MAPE'] = mean_absolute_percentage_error(self.y_val, self.y_pred_val)
         self.scores_val['MdAE'] = median_absolute_error(self.y_val, self.y_pred_val)
-        self.scores_val['RMSE'] = mean_squared_error(self.y_val, self.y_pred_val, squared=False)
+        self.scores_val['MSE'] = mean_squared_error(self.y_val, self.y_pred_val, squared=True)
+        self.scores_val['RMSE'] = mean_squared_error(self.y_train, self.y_pred_train, squared=False)
 
         return self.scores_val
 
