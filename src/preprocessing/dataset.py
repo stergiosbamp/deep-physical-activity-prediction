@@ -1,6 +1,6 @@
 import pandas as pd
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import TimeSeriesSplit
 from pathlib import Path
 from tqdm import tqdm
 
@@ -158,13 +158,13 @@ class DatasetBuilder:
                 dataset.to_pickle(self.directory.__str__())
         return dataset
 
-    def get_train_test(self, dataset, train_ratio=0.75):
+    def get_train_test(self, dataset, ratio=0.75):
         """
         Returns train and test data respecting the chronological order of the time series dataset.
 
         Args:
             dataset (pd.DataFrame): The dataset to split.
-            train_ratio (float): The ratio for training/testing.
+            ratio (float): The ratio for training/testing.
 
         Returns:
             (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The x_train, x_test, y_train,
@@ -178,31 +178,20 @@ class DatasetBuilder:
             y = dataset['var1(t)']
             X = dataset.drop(columns=['var1(t)'])
 
-        # Split into train and test with respect to the chronological order i.e. no shuffle
-        x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio, shuffle=False)
+        # Split into train and test with respect to the chronological order
+        total_examples = dataset.shape[0]
+        split_point = int(total_examples * ratio)
+
+        x_train = X[:split_point]
+        x_test = X[split_point:]
+
+        y_train = y[:split_point]
+        y_test = y[split_point:]
 
         return x_train, x_test, y_train, y_test
 
-    def get_train_val_test(self, dataset, val_ratio=0.2):
-        """
-        Returns train, validation and test data respecting the chronological order of the time series dataset.
-
-        It splits the initial training set into a new training and validation set.
-
-        Args:
-            dataset (pd.DataFrame): The dataset to split.
-            val_ratio (float): The ratio for the validation set.
-
-        Returns:
-            (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame), (pd.DataFrame): The
-            x_train, x_val, x_test, y_train, y_val, y_test sub-datasets.
-        """
-
-        x_train_val, x_test, y_train_val, y_test = self.get_train_test(dataset)
-
-        x_train, x_val, y_train, y_val = train_test_split(x_train_val, y_train_val, test_size=val_ratio, shuffle=False)
-
-        return x_train, x_val, x_test, y_train, y_val, y_test
+    def time_series_cv(self):
+        pass
 
     def create_dataset_steps_features(self):
         """

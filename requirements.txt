@@ -2,7 +2,7 @@ joblib==1.0.1
 numpy==1.21.0
 scikit-learn==0.24.2
 matplotlib==3.4.3
-pytorch-lightning==1.5.4
+pytorch-lightning==1.4.4
 torch==1.9.0
 pymongo==3.12.1
 python-dotenv==0.19.2
