@@ -24,8 +24,8 @@ if __name__ == '__main__':
     x_test = scaler.transform(x_test)
 
     evaluator = DLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test,
-                            model=LSTMRegressor,
-                            ckpt_path='lightning_logs/version_10/checkpoints/LSTM-batch-64-epoch-100-hidden-100-layers-2-dropout-0.2-lr-0.05.ckpt')
+                            model=CNNRegressor,
+                            ckpt_path='lightning_logs/128-CNN/checkpoints/CNN-batch-128-epoch-100-hidden-100-dropout-0.2-lr-0.001-channels-64-kernel-3-pad-2-v1.ckpt')
 
     scores_train = evaluator.evaluate_train()
     scores_val = evaluator.evaluate_val()
@@ -34,6 +34,10 @@ if __name__ == '__main__':
     print("Train set scores:", scores_train)
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
+
+    evaluator.save_results(scores_train, "cnn-train.csv")
+    evaluator.save_results(scores_val, "cnn-val.csv")
+    evaluator.save_results(scores_test, "cnn-test.csv")
 
     evaluator.plot_predictions_train(smooth=True)
     evaluator.plot_predictions(smooth=True)
