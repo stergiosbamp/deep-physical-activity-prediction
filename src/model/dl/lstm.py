@@ -46,8 +46,6 @@ class LSTMRegressor(pl.LightningModule):
 
         out, _ = self.lstm(x)
         out = out.reshape(-1, self.hidden_size)
-        out = self.relu(out)
-        out = self.drop(out)
         out = self.fc(out)
 
         # reshape back to be compatible with the true values' shape
@@ -96,6 +94,8 @@ if __name__ == '__main__':
                                 directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
+    from sklearn.preprocessing import MinMaxScaler
+    dataset = MinMaxScaler().fit_transform(dataset)
     x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     p = dict(
@@ -105,7 +105,7 @@ if __name__ == '__main__':
         hidden_size=100,
         num_layers=2,
         dropout=0.2,
-        learning_rate=0.01,
+        learning_rate=0.001,
         num_workers=4
     )
 
@@ -137,6 +137,6 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=0)
 
     trainer.fit(model, dm)

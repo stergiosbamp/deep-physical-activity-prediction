@@ -1,19 +1,23 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import torch
+import numpy as np
 
 from pathlib import Path
 from sklearn.metrics import r2_score, mean_absolute_percentage_error, mean_absolute_error, median_absolute_error, mean_squared_error
 
 
 class BaseEvaluator:
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, zero_preds=True):
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, scaler, zero_preds=True):
         self.x_train = x_train
         self.x_val = x_val
         self.x_test = x_test
         self.y_train = y_train
         self.y_val = y_val
         self.y_test = y_test
+
+        self.scaler = scaler
+
         self.zero_preds = zero_preds
 
         self.y_pred = None
@@ -31,6 +35,22 @@ class BaseEvaluator:
     def evaluate_test(self):
         self.y_pred = self.inference(self.x_test)
 
+        self.y_pred = self.y_pred.numpy()
+
+        zeros = np.zeros((self.y_pred.shape[0], 72))
+
+        stacked_preds = np.hstack((zeros, self.y_pred.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_preds)
+        preds = inv_stacked[:, -1]
+
+        self.y_pred = preds
+
+        stacked_trues = np.hstack((zeros, self.y_test.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_trues)
+        trues = inv_stacked[:, -1]
+
+        self.y_test = trues
+
         if self.zero_preds:
             self.y_pred = pd.DataFrame(self.y_pred)
             self.y_pred = self.y_pred[0].apply(lambda x: self._zero_prediction(x))
@@ -46,6 +66,22 @@ class BaseEvaluator:
 
     def evaluate_train(self):
         self.y_pred_train = self.inference(self.x_train)
+
+        self.y_pred_train = self.y_pred_train.numpy()
+
+        zeros = np.zeros((self.y_pred_train.shape[0], 72))
+
+        stacked_preds = np.hstack((zeros, self.y_pred_train.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_preds)
+        preds = inv_stacked[:, -1]
+
+        self.y_pred_train = preds
+
+        stacked_trues = np.hstack((zeros, self.y_train.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_trues)
+        trues = inv_stacked[:, -1]
+
+        self.y_train = trues
 
         if self.zero_preds:
             self.y_pred_train = pd.DataFrame(self.y_pred_train)
@@ -63,6 +99,22 @@ class BaseEvaluator:
     def evaluate_val(self):
         self.y_pred_val = self.inference(self.x_val)
 
+        self.y_pred_val = self.y_pred_val.numpy()
+
+        zeros = np.zeros((self.y_pred_val.shape[0], 72))
+
+        stacked_preds = np.hstack((zeros, self.y_pred_val.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_preds)
+        preds = inv_stacked[:, -1]
+
+        self.y_pred_val = preds
+
+        stacked_trues = np.hstack((zeros, self.y_val.reshape(-1, 1)))
+        inv_stacked = self.scaler.inverse_transform(stacked_trues)
+        trues = inv_stacked[:, -1]
+
+        self.y_val = trues
+
         if self.zero_preds:
             self.y_pred_val = pd.DataFrame(self.y_pred_val)
             self.y_pred_val = self.y_pred_val[0].apply(lambda x: self._zero_prediction(x))
@@ -78,7 +130,9 @@ class BaseEvaluator:
         return self.scores_val
 
     def plot_predictions(self, smooth=False):
-        x_range = self.y_test.index
+        end = self.y_test.shape[0]
+        x_range = np.arange(0, end)
+
         if smooth:
             df_preds = pd.DataFrame(self.y_pred)
             df_trues = pd.DataFrame(self.y_test)
@@ -90,7 +144,9 @@ class BaseEvaluator:
         plt.show()
 
     def plot_predictions_train(self, smooth=False):
-        x_range = self.y_train.index
+        end = self.y_train.shape[0]
+        x_range = np.arange(0, end)
+
         if smooth:
             df_preds = pd.DataFrame(self.y_pred_train)
             df_trues = pd.DataFrame(self.y_train)
@@ -131,8 +187,8 @@ class MLEvaluator(BaseEvaluator):
 
 
 class DLEvaluator(BaseEvaluator):
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, model, ckpt_path, zero_preds=True):
-        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, zero_preds)
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, scaler, model, ckpt_path, zero_preds=True):
+        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, scaler, zero_preds)
         self.model = model.load_from_checkpoint(ckpt_path)
         self.model.freeze()
 

@@ -15,17 +15,16 @@ if __name__ == '__main__':
                                 directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
-    x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset=dataset)
+    from sklearn.preprocessing import MinMaxScaler
 
-    # Scale the test set
     scaler = MinMaxScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_val = scaler.transform(x_val)
-    x_test = scaler.transform(x_test)
+    dataset = scaler.fit_transform(dataset)
+    x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     evaluator = DLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test,
-                            model=CNNRegressor,
-                            ckpt_path='lightning_logs/128-CNN/checkpoints/CNN-batch-128-epoch-100-hidden-100-dropout-0.2-lr-0.001-channels-64-kernel-3-pad-2-v1.ckpt')
+                            scaler=scaler,
+                            model=LSTMRegressor,
+                            ckpt_path='lightning_logs/version_0/checkpoints/LSTM-batch-64-epoch-100-hidden-100-layers-2-dropout-0.2-lr-0.01.ckpt')
 
     scores_train = evaluator.evaluate_train()
     scores_val = evaluator.evaluate_val()
@@ -35,9 +34,9 @@ if __name__ == '__main__':
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
 
-    evaluator.save_results(scores_train, "cnn-train.csv")
-    evaluator.save_results(scores_val, "cnn-val.csv")
-    evaluator.save_results(scores_test, "cnn-test.csv")
+    # evaluator.save_results(scores_train, "cnn-train.csv")
+    # evaluator.save_results(scores_val, "cnn-val.csv")
+    # evaluator.save_results(scores_test, "cnn-test.csv")
 
     evaluator.plot_predictions_train(smooth=True)
     evaluator.plot_predictions(smooth=True)
