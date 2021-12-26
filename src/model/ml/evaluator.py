@@ -35,8 +35,6 @@ class BaseEvaluator:
     def evaluate_test(self):
         self.y_pred = self.inference(self.x_test)
 
-        self.y_pred = self.y_pred.numpy()
-
         zeros = np.zeros((self.y_pred.shape[0], 72))
 
         stacked_preds = np.hstack((zeros, self.y_pred.reshape(-1, 1)))
@@ -67,8 +65,6 @@ class BaseEvaluator:
     def evaluate_train(self):
         self.y_pred_train = self.inference(self.x_train)
 
-        self.y_pred_train = self.y_pred_train.numpy()
-
         zeros = np.zeros((self.y_pred_train.shape[0], 72))
 
         stacked_preds = np.hstack((zeros, self.y_pred_train.reshape(-1, 1)))
@@ -98,8 +94,6 @@ class BaseEvaluator:
 
     def evaluate_val(self):
         self.y_pred_val = self.inference(self.x_val)
-
-        self.y_pred_val = self.y_pred_val.numpy()
 
         zeros = np.zeros((self.y_pred_val.shape[0], 72))
 
@@ -178,8 +172,8 @@ class BaseEvaluator:
 
 
 class MLEvaluator(BaseEvaluator):
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor, zero_preds=True):
-        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, zero_preds)
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor, scaler, zero_preds=True):
+        super().__init__(x_train, x_val, x_test, y_train, y_val, y_test, scaler, zero_preds)
         self.regressor = regressor
 
     def inference(self, data):
@@ -193,4 +187,5 @@ class DLEvaluator(BaseEvaluator):
         self.model.freeze()
 
     def inference(self, data):
-        return self.model(torch.from_numpy(data).float())
+        tensor_preds = self.model(torch.from_numpy(data).float())
+        return tensor_preds.numpy()

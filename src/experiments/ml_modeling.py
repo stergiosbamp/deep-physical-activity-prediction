@@ -17,9 +17,9 @@ def ridge():
 
     baseline_ml = BaselineModel(x_train=x_train, x_val=x_val, x_test=x_test,
                                 y_train=y_train, y_val=y_val, y_test=y_test,
-                                regressor=ridge_regressor)
+                                regressor=ridge_regressor, scaler=scaler)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=ridge_grid)
+    baseline_ml.train_model()
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -49,7 +49,7 @@ def trees():
                                 y_train=y_train, y_val=y_val, y_test=y_test,
                                 regressor=trees_regressor)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=trees_grid)
+    baseline_ml.train_model()
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -80,7 +80,7 @@ def boosting():
                                 y_train=y_train, y_val=y_val, y_test=y_test,
                                 regressor=gb_regressor)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=gb_grid)
+    baseline_ml.train_model()
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -106,9 +106,11 @@ if __name__ == '__main__':
                                      total_users=None)
 
     dataset = dataset_builder.create_dataset_all_features()
-    x_train_val, _, y_train_val, _ = dataset_builder.get_train_test(dataset=dataset)
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler()
+    dataset = scaler.fit_transform(dataset)
     x_train, x_val, x_test, y_train, y_val, y_test = dataset_builder.get_train_val_test(dataset=dataset)
 
-    # ridge()
-    trees()
+    ridge()
+    # trees()
     # boosting()

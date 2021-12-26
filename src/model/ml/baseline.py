@@ -6,7 +6,7 @@ from src.model.ml.evaluator import MLEvaluator
 
 
 class BaselineModel:
-    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, regressor):
+    def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, scaler, regressor):
         self.x_train = x_train
         self.x_val = x_val
         self.x_test = x_test
@@ -16,7 +16,7 @@ class BaselineModel:
 
         self.pipe = make_pipeline(MinMaxScaler(), regressor)
 
-        self.evaluator = MLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test, self.pipe)
+        self.evaluator = MLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test, self.pipe, scaler=scaler)
 
     def train_model(self):
         self.pipe.fit(self.x_train, self.y_train)
