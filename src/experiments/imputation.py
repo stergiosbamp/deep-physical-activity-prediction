@@ -9,7 +9,7 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 def no_imputation():
-    pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
+    gb_regressor = GradientBoostingRegressor(verbose=1, random_state=1)
 
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
@@ -19,12 +19,12 @@ def no_imputation():
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
-    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-    baseline_ml.set_pipe(pipe)
+    baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, gb_regressor)
+    baseline_ml.evaluator.zero_preds = False
 
     # record
-    results = baseline_ml.score()
-    print(results)
+    baseline_ml.train_model()
+    results = baseline_ml.evaluator.evaluate_test()
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
@@ -32,7 +32,7 @@ def no_imputation():
 
 
 def with_imputation():
-    pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
+    gb_regressor = GradientBoostingRegressor(verbose=1, random_state=1)
 
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
@@ -42,12 +42,12 @@ def with_imputation():
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
-    baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-    baseline_ml.set_pipe(pipe)
+    baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, gb_regressor)
+    baseline_ml.evaluator.zero_preds = False
 
     # record
-    results = baseline_ml.score()
-    print(results)
+    baseline_ml.train_model()
+    results = baseline_ml.evaluator.evaluate_test()
 
     # # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')

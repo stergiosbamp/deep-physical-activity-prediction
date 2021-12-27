@@ -47,11 +47,11 @@ DAILY_DATASET_PATHS = [
 ]
 
 
-def record_performance(pipe, windows, dataset_paths, path_results):
+def record_performance(regressor, windows, dataset_paths, path_results):
 
-    if os.path.exists(path_results):
-        print("Experiment has already at {}".format(path_results))
-        return
+    # if os.path.exists(path_results):
+    #     print("Experiment has already at {}".format(path_results))
+    #     return
 
     results = {}
 
@@ -66,11 +66,15 @@ def record_performance(pipe, windows, dataset_paths, path_results):
         dataset = dataset_builder.create_dataset_all_features()
         X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
 
-        baseline_ml = BaselineModel(X_train, X_test, y_train, y_test)
-        baseline_ml.set_pipe(pipe)
+        baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, regressor)
+        baseline_ml.evaluator.zero_preds = False
 
         # record
-        results[window] = baseline_ml.score()
+        baseline_ml.train_model()
+        result = baseline_ml.evaluator.evaluate_test()
+
+        # record
+        results[window] = result
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
@@ -79,23 +83,23 @@ def record_performance(pipe, windows, dataset_paths, path_results):
 
 if __name__ == '__main__':
     # Linear model
-    ridge_pipe = make_pipeline(MinMaxScaler(), Ridge(random_state=1))
+    ridge = Ridge(random_state=1)
 
-    record_performance(ridge_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+    record_performance(ridge, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
                        '../../results/window/ridge_hourly_windows.csv')
-    record_performance(ridge_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+    record_performance(ridge, DAILY_WINDOWS, DAILY_DATASET_PATHS,
                        '../../results/window/ridge_daily_windows.csv')
     # Tree model
-    trees_pipe = make_pipeline(MinMaxScaler(), DecisionTreeRegressor(random_state=1))
-    record_performance(trees_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+    trees = DecisionTreeRegressor(random_state=1)
+    record_performance(trees, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
                        '../../results/window/tree_hourly_windows.csv')
-    record_performance(trees_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+    record_performance(trees, DAILY_WINDOWS, DAILY_DATASET_PATHS,
                        '../../results/window/tree_daily_windows.csv')
 
     # Ensemble model
-    gb_pipe = make_pipeline(MinMaxScaler(), GradientBoostingRegressor(verbose=1, random_state=1))
+    gb = GradientBoostingRegressor(verbose=1, random_state=1)
 
-    record_performance(gb_pipe, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
+    record_performance(gb, HOURLY_WINDOWS, HOURLY_DATASET_PATHS,
                        '../../results/window/gb_hourly_windows.csv')
-    record_performance(gb_pipe, DAILY_WINDOWS, DAILY_DATASET_PATHS,
+    record_performance(gb, DAILY_WINDOWS, DAILY_DATASET_PATHS,
                        '../../results/window/gb_daily_windows.csv')
