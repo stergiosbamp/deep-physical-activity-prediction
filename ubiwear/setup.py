@@ -14,7 +14,6 @@ setup(
         'Operating System :: OS Independent'
     ],
     install_requires=['pandas', 'scikit-learn'],
-    package_dir={'ubiwear': 'src'},
-    packages=[''],
+    packages=['ubiwear'],
     description='A Python library for pre-processing ubiquitous aggregated self-tracking data'
 )
