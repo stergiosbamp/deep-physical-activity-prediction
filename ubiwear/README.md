@@ -93,13 +93,13 @@ that works especially for physical activity data.
 ```python
 from ubiwear.processor import Processor
 
-ubiwear_processor = Processor(df=df, lags=2 * 24)
+ubiwear_processor = Processor(df=df)
 
 # Call the magic method
-dataset = ubiwear_processor.process(granularity='1H', q=0.05, impute_start=8, impute_end=24)
+df = ubiwear_processor.process(granularity='1H', q=0.05, impute_start=8, impute_end=24)
 ```
 
-The `dataset` has the following format:
+The `df` has the following format:
 
 ```
                           value  dayofweek_sin  ...  hour_sin      hour_cos
@@ -125,11 +125,28 @@ What has happened ?
 * resampled the data in a unified granularity i.e. hourly granularity
 * imputed specifically for wearables' data missing values on active hours (08:00 - 24:00)
 * enhanced feature space with date features and converted them into their cyclical transformation
-* applied our novel daily aggregated tumbling window
-* removed no wearing days
-* and re-framed the problem from a time-series to a supervised dataset.
 
-* All of the above methods can be called individually and select those that fit your problem.
+All of the above methods can be called individually and select those that fit your problem.
+
+You can also implement your own methods in `Processor` class and call it in your desired pre-processing
+pipeline in a chaining manner.
+
+For example:
+```python
+from ubiwear.processor import Processor
+
+ubiwear_processor = Processor(df=df)
+
+ubiwear_processor \
+    .remove_nan() \
+    .remove_duplicate_values_at_same_timestamp() \
+    .add_date_features() \
+    # ... \    
+    # your_own_method()
+
+# Get the processed data
+df = ubiwear_processor.df
+```
 
 ### Re-frame the problem from time-series to a supervised dataset
 Use the `Window` class which provides two main functionalities that transforms a time-series problem 
@@ -143,7 +160,7 @@ from ubiwear.window import Window
 
 # Transform from time-series to supervised dataset for ML
 window = Window(n_in=2*24)
-dataset = window.to_supervised_dataset(data=dataset)
+dataset = window.to_supervised_dataset(data=df)
 dataset = window.aggregate_predictions(data=dataset)
 ```
 
