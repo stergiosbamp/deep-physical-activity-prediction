@@ -1,14 +1,14 @@
 from sklearn.model_selection import train_test_split
 
 
-class UbiwearDataset:
+class Dataset:
 
     """
     Class that provides sub-datasets for training ML models. It takes as input the dataset created from
     the UBIWEAR's pre-processor.
 
     Attributes:
-        dataset (pd.DataFrame): The dataset created from UbiwearProcessor
+        dataset (pd.DataFrame): The dataset created from Processor
     """
 
     def __init__(self, dataset):

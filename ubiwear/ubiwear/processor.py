@@ -3,26 +3,22 @@ import numpy as np
 
 from pandas.api.types import is_datetime64_dtype, is_float_dtype, is_int64_dtype
 
-from ubiwear.window import Window
 
-
-class UbiwearProcessor:
+class Processor:
     """
     Main class the pre-process time-series aggregated wearable data. The available methods of the class should be
     used in a chaining style. It also offers a "magic" method "process" that processes the data in a pre-defined
-    suggested pipeline.
+    suggested pipeline oriented for physical activity data.
 
     Attributes:
-        df (pd.DataFrame): The dataframe representing the uni-variate time-series data.
+        df (pd.DataFrame): The dataframe holding the uni-variate time-series data.
     """
 
-    def __init__(self, df, lags):
+    def __init__(self, df):
         self.__check_correctness(df)
         self.df = df
 
-        self.window = Window(n_in=lags, n_out=1, dropna=True)
-
-    def process(self, granularity, q, impute_start=None, impute_end=None, remove_no_wear=False):
+    def process(self, granularity, q, impute_start=None, impute_end=None):
         """
         A "magic" all-in-one method that holds a proposed logic for a series of suggested pre-processing steps for
         aggregated wearable data.
@@ -32,10 +28,9 @@ class UbiwearProcessor:
             q (float): Value between 0 <= q <= 1, the quantile(s) to compute for outliers removal.
             impute_start (int): The starting hour in 24-hours format, for imputation of zeros.
             impute_end (int): The ending hour in 24-hours format, for imputation of zeros.
-            remove_no_wear: Whether to remove no wearing days of the wearable device.
 
         Returns:
-            (pd.DataFrame): The pre-processed and transformed supervised dataset to be used for ML.
+            (pd.DataFrame): The pre-processed dataset.
         """
 
         self\
@@ -52,18 +47,6 @@ class UbiwearProcessor:
             .add_sin_cos_features(keep_only_sin_cos_transforms=True) \
 
         processed_df = self.df
-        processed_df = self.window.to_supervised_dataset(processed_df)
-
-        # The aggregation of predictions for the next day, should only be done
-        # when we have hourly records. Otherwise (i.e. when having daily records)
-        # the returned results are returned chunked due to the tumbling window and thus
-        # we lose records that are associated with each other as a time-series.
-        if granularity == '1H':
-            processed_df = self.window.aggregate_predictions(processed_df)
-
-        if remove_no_wear:
-            processed_df = self.remove_no_wear_days(processed_df)
-
         return processed_df
 
     def remove_nan(self):
