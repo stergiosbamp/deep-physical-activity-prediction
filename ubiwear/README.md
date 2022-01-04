@@ -32,6 +32,20 @@ It handles **univariate** time-series aggregated data and process the data in a 
 ## Usage of UBIWEAR
 
 ### Install the library
+Create virtual environment
+
+```
+$ python3 -m venv venv
+$ source venv/bin/activate
+```
+
+Upgrade pip
+
+```
+$ python -m pip install --upgrade pip
+```
+
+Install UBIWEAR
 
 ```
 $ pip install ubiwear
@@ -50,7 +64,7 @@ import pandas as pd
 df = pd.read_csv('assets/df-wearable-time-series-example.csv', index_col='startTime', parse_dates=True)
 ```
 
-The `df` has the following format:
+The `df` must have the following format like in the example:
 ```
                      value
 startTime                 
@@ -67,9 +81,9 @@ startTime
 2015-08-25 05:41:19  112.0
 ```
 
-### Process the data
+### Clean and process the data
 
-Import the `UbiwearProcessor` class. Its' purpose is to pre-process time-series aggregated wearable data. 
+Import the `Processor` class. Its' purpose is to pre-process time-series aggregated wearable data. 
 
 The available methods of the class should be used in a chaining style. 
 
@@ -77,12 +91,60 @@ It also offers a "magic" method `process` that processes the data in a pre-defin
 that works especially for physical activity data.
 
 ```python
-from ubiwear.processor import UbiwearProcessor
+from ubiwear.processor import Processor
 
-ubiwear_processor = UbiwearProcessor(df=df, lags=2*24)
+ubiwear_processor = Processor(df=df, lags=2 * 24)
 
 # Call the magic method
 dataset = ubiwear_processor.process(granularity='1H', q=0.05, impute_start=8, impute_end=24)
+```
+
+The `dataset` has the following format:
+
+```
+                          value  dayofweek_sin  ...  hour_sin      hour_cos
+startTime                                       ...                        
+2015-08-07 05:00:00  198.000000      -0.433884  ...  0.965926  2.588190e-01
+2015-08-07 06:00:00    0.000000      -0.433884  ...  1.000000  6.123234e-17
+2015-08-07 07:00:00  467.000000      -0.433884  ...  0.965926 -2.588190e-01
+2015-08-07 08:00:00  544.333333      -0.433884  ...  0.866025 -5.000000e-01
+2015-08-07 09:00:00  621.666667      -0.433884  ...  0.707107 -7.071068e-01
+                         ...            ...  ...       ...           ...
+2015-08-25 01:00:00    0.000000       0.781831  ...  0.258819  9.659258e-01
+2015-08-25 02:00:00   82.000000       0.781831  ...  0.500000  8.660254e-01
+2015-08-25 03:00:00    0.000000       0.781831  ...  0.707107  7.071068e-01
+2015-08-25 04:00:00    0.000000       0.781831  ...  0.866025  5.000000e-01
+2015-08-25 05:00:00   95.000000       0.781831  ...  0.965926  2.588190e-01
+```
+
+What has happened ?
+
+* removed duplicate observations related to time-series examples.
+* removed NaN/NaT records
+* removed outlier values using the quantiles method
+* resampled the data in a unified granularity i.e. hourly granularity
+* imputed specifically for wearables' data missing values on active hours (08:00 - 24:00)
+* enhanced feature space with date features and converted them into their cyclical transformation
+* applied our novel daily aggregated tumbling window
+* removed no wearing days
+* and re-framed the problem from a time-series to a supervised dataset.
+
+* All of the above methods can be called individually and select those that fit your problem.
+
+### Re-frame the problem from time-series to a supervised dataset
+Use the `Window` class which provides two main functionalities that transforms a time-series problem 
+to a supervised set ready to be used by machine learning algorithms.
+
+* **Sliding window** to transform a time-series problem to a supervised
+* Our novel daily aggregated **tumbling window** 
+
+```python
+from ubiwear.window import Window
+
+# Transform from time-series to supervised dataset for ML
+window = Window(n_in=2*24)
+dataset = window.to_supervised_dataset(data=dataset)
+dataset = window.aggregate_predictions(data=dataset)
 ```
 
 The `dataset` has the following format:
@@ -100,44 +162,15 @@ startTime                                    ...
 2015-08-25 05:00:00       450.0   -0.781831  ...  0.258819    177.0
 ```
 
-in which:
-
-* removed duplicate observations related to time-series examples.
-* removed NaN/NaT records
-* removed outlier values using the quantiles method
-* resampled the data in a unified granularity i.e. hourly granularity
-* imputed specifically for wearables' data missing values on active hours (08:00 - 24:00)
-* enhanced feature space with date features and converted them into their cyclical transformation
-* applied our novel daily aggregated tumbling window
-* removed no wearing days
-* and re-framed the problem from a time-series to a supervised dataset.
-
-
-All of the above methods can be called individually if they do not fit your problem.
-
-However be sure that you call the UBIWEAR's `Window` class that provides
-sliding windows or daily aggregated tumbling window, depending on your case.
-
-For example if you decide not to use the "magic" method you should the following:
-
-```python
-from ubiwear.window import Window
-from ubiwear.processor import UbiwearProcessor
-
-# process the data in your desirable way
-
-ubiwear_processor = UbiwearProcessor(df=df, lags=2*24)
-```
-
 ### Convert dataset for ML
 
-The `UbiwearDataset` is a class that provides sub-datasets for training ML models. It takes as input the dataset 
-created from the UBIWEAR's pre-processor.
+The `Dataset` is a class that provides sub-datasets for training ML models. It takes as input the dataset
+created from the UBIWEAR's `Window` class.
 
 ```python
-from ubiwear.dataset import UbiwearDataset
+from ubiwear.dataset import Dataset
 
-ubiwear_dataset =UbiwearDataset(dataset=dataset)
+ubiwear_dataset = Dataset(dataset=dataset)
 
 # Get train/test sub-datasets
 x_train, x_test, y_train, y_test = ubiwear_dataset.get_train_test(train_ratio=0.75)
@@ -148,7 +181,7 @@ x_train, x_val, x_test, y_train, y_val, y_test = ubiwear_dataset.get_train_val_t
 
 ### Apply your favorite ML or DL model
 
-You know have clean, pre-processed and ready your well-known `X's` and `y's` for your ML problem.
+You know have clean, pre-processed and ready your well-known `X's` and `y's` for your ML problem!
 
 You can call your favorite model, and record the performance on your favorite regression metrics.
 
