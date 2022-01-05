@@ -16,7 +16,7 @@ class Window:
         self.n_out = n_out
         self.dropna = dropna
 
-    def to_supervised_dataset(self, data):
+    def sliding_window(self, data):
         """
         Function that turns a time series dataframe into a supervised dataset by using lagged observations.
 
@@ -62,7 +62,7 @@ class Window:
 
         return result
 
-    def aggregate_predictions(self, data, freq='1D'):
+    def tumbling_window(self, data, freq='1D'):
         """
         Function that aggregates predictions for the next day by default.
         This is useful in a way that we want to predict the next day's steps, rather than
@@ -74,7 +74,7 @@ class Window:
         Essentially it provides tumbling windows.
 
         Args:
-            data (pd.DataFrame): The data to aggregate the predictions
+            data (pd.DataFrame): The data in a timeseries format. E.g. consecutive values
             freq (str): The frequency in panda's style of aggregation for resampling. Defaults to aggregation
                 of next day's steps
 
@@ -82,22 +82,23 @@ class Window:
             (pd.DataFrame): The dataset with output ('var1(t)' column) the aggregated steps count.
         """
 
-        agg_stepscount = data['var1(t)'.format(self.n_in)].resample(rule=freq).sum()
+        sliding_dataset = self.sliding_window(data=data)
+
+        # find each days' total steps
+        steps_per_day = sliding_dataset['var1(t)'].resample(freq).sum()
+
+        # slide to replicate the tumbling window with no overlapping records
+        tumbling_dataset = sliding_dataset[::24].copy()
 
         # drop hourly predictions
-        data.drop(columns=['var1(t)'], inplace=True)
+        tumbling_dataset.drop(columns=['var1(t)'], inplace=True)
 
         # create again the prediction column to be populated
         # with the aggregated values of the next day
-        data['var1(t)'] = None
+        tumbling_dataset['var1(t)'] = None
 
-        # populate it with aggregated predictions
-        for i in range(0, agg_stepscount.shape[0]):
-            start_date = agg_stepscount.index[i-1]
-            end_date = agg_stepscount.index[i]
+        # populate target steps with the total aggregated steps of next day
+        for date_index, steps in zip(tumbling_dataset.index, steps_per_day):
+            tumbling_dataset.at[date_index, 'var1(t)'] = steps
 
-            data.at[start_date:end_date, 'var1(t)'] = agg_stepscount[start_date]
-
-        data.at[end_date:, 'var1(t)'] = agg_stepscount[end_date]
-
-        return data[::24]
+        return tumbling_dataset
