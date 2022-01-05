@@ -16,7 +16,7 @@ class Preprocessor:
 
     def __init__(self, df):
         # Keep what we need and do some type casting
-        self.df = df[['startTime', 'value', 'sourceIdentifier']]
+        self.df = df[['startTime', 'value', 'sourceIdentifier']].copy()
         self.df['value'] = df['value'].astype('float64')
 
     def resample_dates(self, frequency):
