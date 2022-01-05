@@ -92,11 +92,11 @@ class DatasetBuilder:
                 df_user = pd.DataFrame(user_data)
 
                 preprocessor = Preprocessor(df=df_user)
-                if self.granularity == '1H':
-                    # In the case of hourly resampling the daily data sources
-                    # result in 23 of 24 records with zeros.
-                    preprocessor\
-                        .remove_daily_sources()
+                # if self.granularity == '1H':
+                #     # In the case of hourly resampling the daily data sources
+                #     # result in 23 of 24 records with zeros.
+                #     preprocessor\
+                #         .remove_daily_sources()
 
                 preprocessor \
                     .remove_duplicate_values_at_same_timestamp() \
@@ -122,14 +122,15 @@ class DatasetBuilder:
                     # .add_sin_cos_features(keep_only_sin_cos_transforms=False)
 
                 df = preprocessor.df
-                df = self.window.to_supervised_dataset(df)
 
                 # The aggregation of predictions for the next day, should only be done
                 # when we have hourly records. Otherwise (i.e. when having daily records)
                 # the returned results are returned chunked due to the tumbling window and thus
                 # we lose records that are associated with each other as a time-series.
                 if self.granularity == '1H':
-                    df = self.window.aggregate_predictions(df)
+                    df = self.window.tumbling_window(df)
+                else:
+                    df = self.window.sliding_window(df)
 
                 # Remove no wear days
                 # df = preprocessor.remove_no_wear_days(df)
