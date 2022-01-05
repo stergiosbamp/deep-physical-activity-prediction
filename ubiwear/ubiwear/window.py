@@ -74,7 +74,7 @@ class Window:
         Essentially it provides tumbling windows.
 
         Args:
-            data (pd.DataFrame): The data to aggregate the predictions
+            data (pd.DataFrame): The data in a timeseries format. E.g. consecutive values.
             freq (str): The frequency in panda's style of aggregation for resampling. Defaults to aggregation
                 of next day's steps
 
