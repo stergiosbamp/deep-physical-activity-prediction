@@ -153,15 +153,17 @@ Use the `Window` class which provides two main functionalities that transforms a
 to a supervised set ready to be used by machine learning algorithms.
 
 * **Sliding window** to transform a time-series problem to a supervised
-* Our novel daily aggregated **tumbling window** 
+* Our novel aggregated **tumbling window**
 
 ```python
 from ubiwear.window import Window
 
 # Transform from time-series to supervised dataset for ML
-window = Window(n_in=2*24)
-dataset = window.to_supervised_dataset(data=df)
-dataset = window.aggregate_predictions(data=dataset)
+window = Window(n_in=2 * 24)
+dataset = window.sliding_window(data=df)
+
+# OR aggregated tumbling window
+# dataset = window.tumbling_window(data=df, freq='1D')
 ```
 
 The `dataset` has the following format:
