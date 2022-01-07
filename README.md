@@ -1,6 +1,13 @@
 # Physical Activity Prediction with Deep Learning
 This is the GitHub repository for the Thesis entitled "Physical Activity Prediction with Deep Learning" of MSc Data and Web Science.
 
+:rocket: **One of our major contributions is** [UBIWEAR](./ubiwear/).
+
+<p align="center">
+  <img src="ubiwear/assets/logo.png" width="250" title="UBIWEAR">
+</p>
+
+The first open-source Python library designed for data pre-processing of ubiquitous self-tracking devices.
 
 ## Project setup
 
