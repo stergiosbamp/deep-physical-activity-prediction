@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='ubiwear',
-    version='0.0.1',
-    url='https://github.com/stergiosbamp/deep-physical-activity-prediction/ubiwear/',
+    version='0.0.2',
+    url='https://github.com/stergiosbamp/deep-physical-activity-prediction/',
     description='A Python library for pre-processing ubiquitous aggregated self-tracking data',
     long_description=long_description,
     long_description_content_type='text/markdown',
