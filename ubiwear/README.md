@@ -1,7 +1,7 @@
 # UBIWEAR
 
 <p align="center">
-  <img src="./assets/logo.png" width="250" title="UBIWEAR">
+  <img src="https://raw.githubusercontent.com/stergiosbamp/deep-physical-activity-prediction/main/ubiwear/assets/logo.png?token=GHSAT0AAAAAABMGPXQKH6JE4UX625GRBLGMYPBH6JA" width="250" title="UBIWEAR">
 </p>
 
 A Python library for pre-processing ubiquitous aggregated self-tracking data.

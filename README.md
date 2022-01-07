@@ -4,7 +4,7 @@ This is the GitHub repository for the Thesis entitled "Physical Activity Predict
 :rocket: **One of our major contributions is** [UBIWEAR](./ubiwear/).
 
 <p align="center">
-  <img src="ubiwear/assets/logo.png" width="250" title="UBIWEAR">
+  <img src="https://raw.githubusercontent.com/stergiosbamp/deep-physical-activity-prediction/main/ubiwear/assets/logo.png?token=GHSAT0AAAAAABMGPXQKH6JE4UX625GRBLGMYPBH6JA" width="250" title="UBIWEAR">
 </p>
 
 The first open-source Python library designed for data pre-processing of ubiquitous self-tracking devices.
