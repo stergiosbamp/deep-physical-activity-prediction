@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name='ubiwear-stergiosbamp',
-    version='0.0.16',
+    name='ubiwear',
+    version='0.0.1',
     url='https://github.com/stergiosbamp/deep-physical-activity-prediction/ubiwear/',
     description='A Python library for pre-processing ubiquitous aggregated self-tracking data',
     long_description=long_description,
