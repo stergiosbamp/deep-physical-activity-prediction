@@ -109,6 +109,6 @@ if __name__ == '__main__':
     x_train_val, _, y_train_val, _ = dataset_builder.get_train_test(dataset=dataset)
     x_train, x_val, x_test, y_train, y_val, y_test = dataset_builder.get_train_val_test(dataset=dataset)
 
-    # ridge()
+    ridge()
     trees()
-    # boosting()
+    boosting()
