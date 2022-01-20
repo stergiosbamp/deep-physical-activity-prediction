@@ -1,3 +1,5 @@
+import argparse
+
 from sklearn.preprocessing import MinMaxScaler
 
 from src.model.dl.lstm import LSTMRegressor
@@ -8,6 +10,26 @@ from src.model.ml.evaluator import DLEvaluator
 
 
 if __name__ == '__main__':
+    # Arguments
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--ckpt_path', help='The checkpoint path for the PyTorch pre-trained model')
+    parser.add_argument('--model', help='One of RNN | CNN | MLP')
+
+    args = parser.parse_args()
+
+    ckpt_path = args.ckpt_path
+    model_type = args.model
+
+    if model_type == 'RNN':
+        model = LSTMRegressor
+    elif model_type == 'CNN':
+        model = CNNRegressor
+    elif model_type == 'MLP':
+        model = MLPRegressor
+    else:
+        print("The model must be one of: RNN, CNN, MLP. Not {}", model_type)
+        exit()
+
     # Get the dataset to get the same train/test splits
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
@@ -24,8 +46,8 @@ if __name__ == '__main__':
     x_test = scaler.transform(x_test)
 
     evaluator = DLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test,
-                            model=CNNRegressor,
-                            ckpt_path='lightning_logs/128-CNN/checkpoints/CNN-batch-128-epoch-100-hidden-100-dropout-0.2-lr-0.001-channels-64-kernel-3-pad-2-v1.ckpt')
+                            model=model,
+                            ckpt_path=ckpt_path)
 
     scores_train = evaluator.evaluate_train()
     scores_val = evaluator.evaluate_val()
@@ -35,9 +57,9 @@ if __name__ == '__main__':
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
 
-    evaluator.save_results(scores_train, "cnn-train.csv")
-    evaluator.save_results(scores_val, "cnn-val.csv")
-    evaluator.save_results(scores_test, "cnn-test.csv")
+    # evaluator.save_results(scores_train, "cnn-train.csv")
+    # evaluator.save_results(scores_val, "cnn-val.csv")
+    # evaluator.save_results(scores_test, "cnn-test.csv")
 
-    evaluator.plot_predictions_train(smooth=True)
-    evaluator.plot_predictions(smooth=True)
+    # evaluator.plot_predictions_train(smooth=True)
+    # evaluator.plot_predictions(smooth=True)
