@@ -19,7 +19,8 @@ def ridge():
                                 y_train=y_train, y_val=y_val, y_test=y_test,
                                 regressor=ridge_regressor)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=ridge_grid)
+    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=ridge_grid,
+                           path_to_save="../model/ml/models/ridge.pkl")
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -49,7 +50,8 @@ def trees():
                                 y_train=y_train, y_val=y_val, y_test=y_test,
                                 regressor=trees_regressor)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=trees_grid)
+    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=trees_grid,
+                           path_to_save="../model/ml/models/tree.pkl")
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -80,7 +82,8 @@ def boosting():
                                 y_train=y_train, y_val=y_val, y_test=y_test,
                                 regressor=gb_regressor)
 
-    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=gb_grid)
+    baseline_ml.tune_model(X=x_train_val, y=y_train_val, grid_params=gb_grid,
+                           path_to_save="../model/ml/models/gb.pkl")
 
     scores_train = baseline_ml.evaluator.evaluate_train()
     scores_val = baseline_ml.evaluator.evaluate_val()
@@ -109,6 +112,6 @@ if __name__ == '__main__':
     x_train_val, _, y_train_val, _ = dataset_builder.get_train_test(dataset=dataset)
     x_train, x_val, x_test, y_train, y_val, y_test = dataset_builder.get_train_val_test(dataset=dataset)
 
-    # ridge()
+    ridge()
     trees()
-    # boosting()
+    boosting()

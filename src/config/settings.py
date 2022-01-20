@@ -1,5 +1,6 @@
 """
 Module for global variable declarations
 """
+import torch 
 
-GPU = 1  # the count of GPUs in the system, 0 if none available
+GPU = 1  if torch.cuda.is_available() else 0

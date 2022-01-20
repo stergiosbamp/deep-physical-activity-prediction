@@ -4,7 +4,7 @@ This is the GitHub repository for the Thesis entitled "Physical Activity Predict
 :rocket: **One of our major contributions is** [UBIWEAR](./ubiwear/).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/stergiosbamp/deep-physical-activity-prediction/main/ubiwear/assets/logo.png?token=GHSAT0AAAAAABMGPXQKH6JE4UX625GRBLGMYPBH6JA" width="250" title="UBIWEAR">
+  <img src="ubiwear/assets/logo.png" width="250" title="UBIWEAR">
 </p>
 
 The first open-source Python library designed for data pre-processing of ubiquitous self-tracking devices.
@@ -107,9 +107,18 @@ volumes:
 Then you can import the data in the same way as described above. Rememeber to use the
 new name of container which is `mongodb-backup`.
 
+# Reproducability
 ## Download the data from Synapse and import files to the database
 
-Setup your Synapse credentials in the .env file: `SYNAPSE_USER, SYNAPSE_PASSWORD`
+Setup your Synapse credentials in the `.env` file: `SYNAPSE_USER, SYNAPSE_PASSWORD`.
+
+Setup the Mongo DB connection in the `.env` file: `MONGODB_HOST, MONGODB_PORT`.
+
+Setup PYTHONPATH to include `src/`:
+
+```
+$ export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
 
 Then download the Healthkit data table
 
@@ -134,3 +143,57 @@ stores them in a clean `healthkit_stepscount_singles` collection.
 This is the main collection and source of data of the project, that all data pre-processing and ML/DL model building
 is based upon.
 
+## Create the datasets
+
+To create the datasets for both daily and hourly granularity and from 1 to 6 days before as lags:
+
+```
+$ cd src/experiments/
+$ python create_datasets.py
+```
+
+Or request from the contributors of this project to provide you the final and pre-processed 
+dataset in a DataFrame pickle format and place it under: `data/datasets/hourly/df-3x24-just-steps.pkl`
+
+## Run the Machine Learning models
+
+### Run the pre-trained models
+
+In `src/model/ml/models/` there are the pre-trained and hyperparam-tuned models:
+- Ridge
+- Decision Tree
+- Histogram-based Gradient Boosting
+
+```
+$ cd src/model/ml/
+$ python evaluate.py --pretrained-model models/[ridge.pkl | tree.pkl | gb.pkl]
+```
+
+### From scratch training and tuning
+
+```
+$ cd src/experiments/
+$ python ml_modeling.py
+```
+
+## Run the Deep Learning models
+
+### Run the pre-trained models
+
+In `src/model/dl/models/` there are the pre-trained models:
+- Multi-layer Perceptron
+- 1D Convolutional Neural Network
+- Recurrent Neural Network (2-stacked LSTM)
+
+```
+$ cd src/model/dl/
+$ python evaluate.py --cpkt_path models/{PATH_TO_PRETRAINED_MODEL} --architecture [MLP | CNN | RNN]
+```
+
+### From scratch training
+
+`$ cd src/model/dl/`
+
+- Train the MLP architecture: `$ python mlp.py`
+- Train the CNN architecture: `$ python cnn.py`
+- Train the RNN (LSTM) architecture: `$ python lstm.py`
