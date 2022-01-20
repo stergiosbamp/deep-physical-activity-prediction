@@ -107,7 +107,7 @@ volumes:
 Then you can import the data in the same way as described above. Rememeber to use the
 new name of container which is `mongodb-backup`.
 
-# Reproducability
+# Reproducibility
 ## Download the data from Synapse and import files to the database
 
 Setup your Synapse credentials in the `.env` file: `SYNAPSE_USER, SYNAPSE_PASSWORD`.
