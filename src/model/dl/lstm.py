@@ -47,7 +47,6 @@ class LSTMRegressor(pl.LightningModule):
         out, _ = self.lstm(x)
         out = out.reshape(-1, self.hidden_size)
         out = self.relu(out)
-        out = self.drop(out)
         out = self.fc(out)
 
         # reshape back to be compatible with the true values' shape
@@ -64,7 +63,7 @@ class LSTMRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("train_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mae
+        return mse
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
@@ -74,7 +73,7 @@ class LSTMRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("val_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mae
+        return mse
 
     def test_step(self, batch, batch_idx):
         x, y = batch
