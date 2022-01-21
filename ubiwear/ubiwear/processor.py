@@ -1,53 +1,63 @@
 import pandas as pd
 import numpy as np
 
-from src.config.synapse import DAILY_SOURCES
+from pandas.api.types import is_datetime64_dtype, is_float_dtype, is_int64_dtype
 
 
-class Preprocessor:
+class Processor:
     """
-    Class the pre-process every user's data. Ideally the available methods can be used
-    in a chaining style that will help to define a pre-processing framework for wearables aggregated data and analytics.
+    Main class the pre-process time-series aggregated wearable data. The available methods of the class should be
+    used in a chaining style. It also offers a "magic" method "process" that processes the data in a pre-defined
+    suggested pipeline oriented for physical activity data.
 
     Attributes:
-        df (pd.DataFrame): The user's data as a DataFrame. Filters only the need value of the steps and the startTime
-            for the time series. Discards the other irrelevant information such as iPhone model, recordId, etc.
+        df (pd.DataFrame): The dataframe holding the uni-variate time-series data.
     """
 
     def __init__(self, df):
-        # Keep what we need and do some type casting
-        self.df = df[['startTime', 'value', 'sourceIdentifier']].copy()
-        self.df['value'] = df['value'].astype('float64')
+        self.__check_correctness(df)
+        self.df = df
 
-    def resample_dates(self, frequency):
+    def process(self, granularity, q, impute_start=None, impute_end=None):
         """
-        Resamples and aggregates the data in fixed intervals and sums the data.
+        A "magic" all-in-one method that holds a proposed logic for a series of suggested pre-processing steps for
+        aggregated wearable data.
 
         Args:
-            frequency (str): The string in panda's offset style for resampling and aggregating the time series data
+            granularity (str): The string in panda's offset style for resampling and aggregating the time series data.
+            q (float): Value between 0 <= q <= 1, the quantile(s) to compute for outliers removal.
+            impute_start (int): The starting hour in 24-hours format, for imputation of zeros.
+            impute_end (int): The ending hour in 24-hours format, for imputation of zeros.
+
+        Returns:
+            (pd.DataFrame): The pre-processed dataset.
+        """
+
+        self\
+            .remove_duplicate_values_at_same_timestamp()\
+            .remove_nan() \
+            .remove_outlier_values(q=q) \
+            .resample_dates(frequency=granularity)
+
+        # Imputation is only meaningful in hourly granularity
+        if granularity == '1H':
+            self.impute_zeros(start_hour=impute_start, end_hour=impute_end)
+
+        self.add_date_features() \
+            .add_sin_cos_features(keep_only_sin_cos_transforms=True) \
+
+        processed_df = self.df
+        return processed_df
+
+    def remove_nan(self):
+        """
+        Removes NaT/NaN dates that break the resampling.
 
         Returns:
             (self).
         """
-        # check if after outliers removal, df is empty then return the empty df
-        # e.g. (the same object as is)
-        if self.df.empty:
-            return self
 
-        self.df = self.df.resample(rule=frequency, on='startTime').sum()
-        return self
-
-    def remove_outlier_dates(self):
-        """
-        Removes outlier or NaT/NaN dates that break the resampling.
-
-        Returns:
-            (self).
-        """
-
-        # Some missing dates were filled with 2021 year
-        self.df = self.df[self.df['startTime'] < pd.to_datetime('2021')]
-        # Some dates are with NaT values
+        # NaN dates are also represented as NaT (Not A Timestamp)
         self.df.dropna(inplace=True)
         return self
 
@@ -65,6 +75,24 @@ class Preprocessor:
         q_low = self.df["value"].quantile(q)
         q_hi = self.df["value"].quantile(1 - q)
         self.df = self.df[(self.df["value"] < q_hi) & (self.df["value"] > q_low)]
+        return self
+
+    def resample_dates(self, frequency):
+        """
+        Resamples and aggregates the data in fixed intervals and sums the data.
+
+        Args:
+            frequency (str): The string in panda's offset style for resampling and aggregating the time series data
+
+        Returns:
+            (self).
+        """
+        # check if after outliers removal, df is empty then return the empty df
+        # e.g. (the same object as is)
+        if self.df.empty:
+            return self
+
+        self.df = self.df.resample(rule=frequency).sum()
         return self
 
     def impute_zeros(self, start_hour=8, end_hour=24):
@@ -102,7 +130,7 @@ class Preprocessor:
 
         # Drop subsequent days that have
         # at the exact same timestamp with the exact same value of steps
-        self.df.drop_duplicates(subset=['startTime', 'value'], keep='first', inplace=True)
+        self.df.drop_duplicates(subset=['value'], keep='first', inplace=True)
         return self
 
     def add_date_features(self):
@@ -112,8 +140,9 @@ class Preprocessor:
         Returns:
             (self).
         """
+
         self.df['dayofweek'] = self.df.index.dayofweek
-        self.df['week'] = self.df.index.week
+        self.df['week'] = self.df.index.isocalendar().week
         self.df['month'] = self.df.index.month
         self.df['year'] = self.df.index.year
         self.df['day'] = self.df.index.day
@@ -121,7 +150,7 @@ class Preprocessor:
 
         return self
 
-    def add_sin_cos_features(self, keep_only_sin_cos_transforms=False):
+    def add_sin_cos_features(self, keep_only_sin_cos_transforms=True):
         """
         Adds sin/cos transformation as features from the plain date features, to encode the cyclical features.
 
@@ -173,20 +202,6 @@ class Preprocessor:
             return True
         return False
 
-    def remove_daily_sources(self):
-        """
-        Function that removes all source identifiers that emit daily data.
-
-        Returns:
-            (self)
-        """
-        # Keep only sources that are not in the list of daily emitted sources
-        self.df = self.df[~self.df['sourceIdentifier'].isin(DAILY_SOURCES)]
-
-        # Drop column of the source identifier
-        self.df.drop(columns=['sourceIdentifier'], inplace=True)
-        return self
-
     @staticmethod
     def remove_no_wear_days(df):
         """
@@ -227,3 +242,23 @@ class Preprocessor:
         """
 
         return np.cos(2 * np.pi * values / len(set(values)))
+
+    @staticmethod
+    def __check_correctness(df):
+        """
+        Private method that ensures that the passed dataframe has the proper formatting, in order to be processed
+        by the framework.
+
+        Args:
+            df (pd.DataFrame): The dataframe to perform checks.
+
+        """
+
+        assert 'value' in df.columns, "Dataframe must contain a column 'value' representing the data of " \
+                                      "the time-series."
+
+        if not is_datetime64_dtype(df.index.dtype):
+            raise Exception("The index of the passed dataframe must be datetime data type.")
+
+        if not (is_float_dtype(df.dtypes['value']) or is_int64_dtype(df.dtypes['value'])):
+            raise Exception("The data type of 'value' column must be float or int.")

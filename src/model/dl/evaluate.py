@@ -8,6 +8,26 @@ from src.model.ml.evaluator import DLEvaluator
 
 
 if __name__ == '__main__':
+    # Arguments
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--ckpt_path', help='The checkpoint path for the PyTorch pre-trained model')
+    parser.add_argument('--model', help='One of RNN | CNN | MLP')
+
+    args = parser.parse_args()
+
+    ckpt_path = args.ckpt_path
+    model_type = args.model
+
+    if model_type == 'RNN':
+        model = LSTMRegressor
+    elif model_type == 'CNN':
+        model = CNNRegressor
+    elif model_type == 'MLP':
+        model = MLPRegressor
+    else:
+        print("The model must be one of: RNN, CNN, MLP. Not {}", model_type)
+        exit()
+
     # Get the dataset to get the same train/test splits
     ds_builder = DatasetBuilder(n_in=3*24,
                                 granularity='whatever',
@@ -22,9 +42,8 @@ if __name__ == '__main__':
     x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     evaluator = DLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test,
-                            scaler=scaler,
-                            model=LSTMRegressor,
-                            ckpt_path='lightning_logs/version_0/checkpoints/LSTM-batch-64-epoch-100-hidden-100-layers-2-dropout-0.2-lr-0.01.ckpt')
+                            model=model,
+                            ckpt_path=ckpt_path)
 
     scores_train = evaluator.evaluate_train()
     scores_val = evaluator.evaluate_val()
@@ -38,5 +57,5 @@ if __name__ == '__main__':
     # evaluator.save_results(scores_val, "cnn-val.csv")
     # evaluator.save_results(scores_test, "cnn-test.csv")
 
-    evaluator.plot_predictions_train(smooth=True)
-    evaluator.plot_predictions(smooth=True)
+    # evaluator.plot_predictions_train(smooth=True)
+    # evaluator.plot_predictions(smooth=True)

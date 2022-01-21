@@ -45,7 +45,7 @@ class LSTMRegressor(pl.LightningModule):
         x = x.view(len(x), 1, -1)
 
         out, _ = self.lstm(x)
-        out = out.reshape(-1, self.hidden_size)
+        out = self.relu(out)
         out = self.fc(out)
 
         # reshape back to be compatible with the true values' shape
@@ -137,6 +137,6 @@ if __name__ == '__main__':
     )
 
     # Trainer
-    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=0)
+    trainer = Trainer(max_epochs=p['max_epochs'], callbacks=[model_checkpoint], gpus=GPU)
 
     trainer.fit(model, dm)
