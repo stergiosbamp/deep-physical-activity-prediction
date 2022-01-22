@@ -18,11 +18,16 @@ class TimeSeriesDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
         self.num_workers = num_workers
 
-    # def prepare_data(self):
-        # scaler = MinMaxScaler()
-        # self.x_train = scaler.fit_transform(self.x_train)
-        # self.x_val = scaler.transform(self.x_val)
-        # self.x_test = scaler.transform(self.x_test)
+    def prepare_data(self):
+        scaler = MinMaxScaler()
+        self.x_train = scaler.fit_transform(self.x_train)
+        self.x_val = scaler.transform(self.x_val)
+        self.x_test = scaler.transform(self.x_test)
+
+        target_scaler = MinMaxScaler()
+        self.y_train = target_scaler.fit_transform(self.y_train.values.reshape(-1, 1))
+        self.y_val = target_scaler.transform(self.y_val.values.reshape(-1, 1))
+        self.y_test = target_scaler.transform(self.y_test.values.reshape(-1, 1))
 
     def setup(self, stage=None):
         if stage == 'fit' or stage is None:

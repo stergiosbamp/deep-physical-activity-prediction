@@ -67,7 +67,6 @@ class LSTMRegressor(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        y_hat = y_hat.reshape(-1)
         mse = self.mse(y_hat, y)
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
@@ -94,8 +93,6 @@ if __name__ == '__main__':
                                 directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
-    from sklearn.preprocessing import MinMaxScaler
-    dataset = MinMaxScaler().fit_transform(dataset)
     x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     p = dict(
@@ -103,9 +100,9 @@ if __name__ == '__main__':
         max_epochs=100,
         n_features=x_train.shape[1],
         hidden_size=100,
-        num_layers=2,
-        dropout=0.2,
-        learning_rate=0.001,
+        num_layers=3,
+        dropout=0.3,
+        learning_rate=0.0001,
         num_workers=4
     )
 

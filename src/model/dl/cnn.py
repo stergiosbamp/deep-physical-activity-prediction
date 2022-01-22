@@ -67,17 +67,16 @@ class CNNRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("train_loss", {"MSE": mse, "MAE": mae, "R2": r2}, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        y_hat = y_hat.reshape(-1)
         mse = self.mse(y_hat, y)
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("val_loss", {"MSE": mse, "MAE": mae, "R2": r2}, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def test_step(self, batch, batch_idx):
         x, y = batch
@@ -102,7 +101,7 @@ if __name__ == '__main__':
     x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     p = dict(
-        batch_size=64,
+        batch_size=128,
         max_epochs=100,
         n_features=x_train.shape[1],
         out_channels=64,
@@ -110,7 +109,7 @@ if __name__ == '__main__':
         padding=2,
         hidden_size=100,
         dropout=0.2,
-        learning_rate=0.001,
+        learning_rate=0.0001,
         num_workers=4
     )
 
