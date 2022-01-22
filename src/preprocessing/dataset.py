@@ -176,8 +176,8 @@ class DatasetBuilder:
             y = dataset['class']
             X = dataset.drop(columns=['class'])
         else:
-            y = dataset[:, -1]
-            X = dataset[:, :-1]
+            y = dataset['var1(t)']
+            X = dataset.drop(columns=['var1(t)'])
 
         # Split into train and test with respect to the chronological order i.e. no shuffle
         x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio, shuffle=False)
