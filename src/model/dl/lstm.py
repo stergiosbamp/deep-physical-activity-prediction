@@ -49,7 +49,7 @@ class LSTMRegressor(pl.LightningModule):
         out = self.fc(out)
 
         # reshape back to be compatible with the true values' shape
-        out = out.reshape(len(x), 1)
+        out = out.reshape(len(x), -1)
         return out
 
     def configure_optimizers(self):
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         batch_size=64,
         max_epochs=100,
         n_features=x_train.shape[1],
-        hidden_size=100,
+        hidden_size=200,
         num_layers=3,
         dropout=0.3,
         learning_rate=0.0001,
