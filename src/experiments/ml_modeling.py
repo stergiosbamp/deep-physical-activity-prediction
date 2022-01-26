@@ -39,7 +39,8 @@ def run_ml_model(regressor, grid, model_name):
 
     # choose between simple train or cross-validate
     # model = baseline_ml.train_model(x=x_train, y=y_train)
-    model = baseline_ml.tune_model(x=x_train_val, y=y_train_val.reshape(-1), grid_params=grid)
+    model = baseline_ml.tune_model(x=x_train_val, y=y_train_val.reshape(-1),
+                                   grid_params=grid, path_to_save='../model/ml/models/{}.pkl'.format(model_name))
 
     evaluator = MLEvaluator(model)
 
