@@ -45,7 +45,7 @@ if __name__ == '__main__':
     x_val = features_scaler.transform(x_val)
     x_test = features_scaler.transform(x_test)
 
-    evaluator = DLEvaluator(model=CNNRegressor,
+    evaluator = DLEvaluator(model=model,
                             ckpt_path=ckpt_path)
 
     y_pred = evaluator.inference(x_test)
