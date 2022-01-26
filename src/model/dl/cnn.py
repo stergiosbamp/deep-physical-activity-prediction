@@ -12,28 +12,29 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 class CNNRegressor(pl.LightningModule):
-    def __init__(self, n_features, out_channels, hidden_size, batch_size, dropout, learning_rate,
+    def __init__(self, n_features, out_channels, batch_size, dropout, learning_rate,
                  kernel, padding):
         super(CNNRegressor, self).__init__()
         self.save_hyperparameters()
 
         self.n_features = n_features
         self.out_channels = out_channels
-        self.hidden_size = hidden_size
+        self.kernel = kernel
+        self.padding = padding
         self.batch_size = batch_size
         self.learning_rate = learning_rate
 
         self.dropout = nn.Dropout(p=dropout)
-        self.conv1 = nn.Conv1d(in_channels=self.n_features,
+        self.conv1 = nn.Conv1d(in_channels=1,
                                out_channels=self.out_channels,
-                               kernel_size=kernel,
-                               padding=padding)
+                               kernel_size=self.kernel,
+                               padding='same')
         self.conv2 = nn.Conv1d(in_channels=self.out_channels,
                                out_channels=self.out_channels,
-                               kernel_size=kernel,
-                               padding=padding)
-        self.max_pool = nn.MaxPool1d(kernel_size=kernel)
-        self.fc = nn.Linear(self.out_channels, 1)
+                               kernel_size=int(self.kernel/2),
+                               padding='valid')
+        self.max_pool = nn.MaxPool1d(kernel_size=6)
+        self.fc = nn.Linear(64, 1)
         self.relu = nn.ReLU()
 
         # Metrics and logging
@@ -43,17 +44,21 @@ class CNNRegressor(pl.LightningModule):
 
     def forward(self, x):
         # 3D for conv
-        x = x.unsqueeze(2)
+        # 1 channel, of N_FEATURES length: due to uni-variate time-series.
+        x = x.view(x.shape[0], 1, -1)
+
         x = self.conv1(x)
         x = self.max_pool(x)
+        x = self.relu(x)
         x = self.dropout(x)
 
         x = self.conv2(x)
-        x = self.max_pool(x)
+        # x = self.max_pool(x)
+        x = self.relu(x)
         x = self.dropout(x)
 
         # restore shape for feed-forward layers
-        x = x.view(x.shape[0], x.shape[1])
+        x = x.view(x.shape[0], -1)
         x = self.fc(x)
         return x
 
@@ -85,7 +90,7 @@ class CNNRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("test_loss", {"MSE": mse, "MAE": mae, "R2": r2}, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
 
 if __name__ == '__main__':
@@ -101,13 +106,12 @@ if __name__ == '__main__':
     x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
     p = dict(
-        batch_size=128,
+        batch_size=64,
         max_epochs=100,
         n_features=x_train.shape[1],
         out_channels=64,
-        kernel=3,
-        padding=2,
-        hidden_size=100,
+        kernel=24,
+        padding=0,
         dropout=0.2,
         learning_rate=0.0001,
         num_workers=4
@@ -129,7 +133,6 @@ if __name__ == '__main__':
     model = CNNRegressor(
         n_features=p['n_features'],
         out_channels=p['out_channels'],
-        hidden_size=p['hidden_size'],
         batch_size=p['batch_size'],
         dropout=p['dropout'],
         learning_rate=p['learning_rate'],
@@ -138,7 +141,7 @@ if __name__ == '__main__':
     )
 
     model_checkpoint = ModelCheckpoint(
-        filename='CNN-batch-{batch_size}-epoch-{max_epochs}-hidden-{hidden_size}-dropout-{'
+        filename='CNN-batch-{batch_size}-epoch-{max_epochs}-dropout-{'
                  'dropout}-lr-{learning_rate}-channels-{out_channels}-kernel-{kernel}-pad-{padding}'.format(**p)
     )
 
