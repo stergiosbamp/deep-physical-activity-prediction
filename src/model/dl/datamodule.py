@@ -31,13 +31,13 @@ class TimeSeriesDataModule(pl.LightningDataModule):
 
     def setup(self, stage=None):
         if stage == 'fit' or stage is None:
-            self.y_train = self.y_train.reshape((-1, 1))
+            return
 
         if stage == 'validate' or stage is None:
-            self.y_val = self.y_val.reshape((-1, 1))
+            return
 
         if stage == 'test' or stage is None:
-            self.y_test = self.y_test.reshape((-1, 1))
+            return
 
     def train_dataloader(self):
         train_dataset = TimeSeriesDataset(self.x_train,
