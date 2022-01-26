@@ -13,28 +13,28 @@ from src.preprocessing.dataset import DatasetBuilder
 
 class CNNRegressor(pl.LightningModule):
     def __init__(self, n_features, out_channels, batch_size, dropout, learning_rate,
-                 kernel, padding):
+                 conv_kernel, pool_kernel):
         super(CNNRegressor, self).__init__()
         self.save_hyperparameters()
 
         self.n_features = n_features
         self.out_channels = out_channels
-        self.kernel = kernel
-        self.padding = padding
+        self.conv_kernel = conv_kernel
+        self.pool_kernel = pool_kernel
         self.batch_size = batch_size
         self.learning_rate = learning_rate
 
         self.dropout = nn.Dropout(p=dropout)
         self.conv1 = nn.Conv1d(in_channels=1,
                                out_channels=self.out_channels,
-                               kernel_size=self.kernel,
+                               kernel_size=self.conv_kernel,
                                padding='same')
         self.conv2 = nn.Conv1d(in_channels=self.out_channels,
                                out_channels=self.out_channels,
-                               kernel_size=int(self.kernel/2),
+                               kernel_size=self.conv_kernel,
                                padding='valid')
-        self.max_pool = nn.MaxPool1d(kernel_size=6)
-        self.fc = nn.Linear(64, 1)
+        self.max_pool = nn.MaxPool1d(kernel_size=self.pool_kernel)
+        self.fc = nn.Linear(384, 1)
         self.relu = nn.ReLU()
 
         # Metrics and logging
@@ -53,7 +53,7 @@ class CNNRegressor(pl.LightningModule):
         x = self.dropout(x)
 
         x = self.conv2(x)
-        # x = self.max_pool(x)
+        x = self.max_pool(x)
         x = self.relu(x)
         x = self.dropout(x)
 
@@ -110,8 +110,8 @@ if __name__ == '__main__':
         max_epochs=100,
         n_features=x_train.shape[1],
         out_channels=64,
-        kernel=24,
-        padding=0,
+        conv_kernel=24,
+        pool_kernel=2,
         dropout=0.2,
         learning_rate=0.0001,
         num_workers=4
@@ -136,13 +136,14 @@ if __name__ == '__main__':
         batch_size=p['batch_size'],
         dropout=p['dropout'],
         learning_rate=p['learning_rate'],
-        kernel=p['kernel'],
-        padding=p['padding']
+        conv_kernel=p['conv_kernel'],
+        pool_kernel=p['pool_kernel']
     )
 
     model_checkpoint = ModelCheckpoint(
         filename='CNN-batch-{batch_size}-epoch-{max_epochs}-dropout-{'
-                 'dropout}-lr-{learning_rate}-channels-{out_channels}-kernel-{kernel}-pad-{padding}'.format(**p)
+                 'dropout}-lr-{learning_rate}-channels-{out_channels}-conv-{conv_kernel}-pool-{'
+                 'pool_kernel}'.format(**p)
     )
 
     # Trainer
