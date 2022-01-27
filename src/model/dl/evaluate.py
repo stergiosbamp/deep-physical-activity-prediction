@@ -1,5 +1,6 @@
 import argparse
 from sklearn.preprocessing import MinMaxScaler
+from pathlib import Path
 
 from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor
@@ -68,9 +69,11 @@ if __name__ == '__main__':
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
 
-    # evaluator.save_results(scores_train, "cnn-train.csv")
-    # evaluator.save_results(scores_val, "cnn-val.csv")
-    # evaluator.save_results(scores_test, "cnn-test.csv")
+    # # Save results
+    # evaluator.results_folder = Path("../../../results/modeling")
+    # evaluator.save_results(scores_train, "lstm-train.csv")
+    # evaluator.save_results(scores_val, "lstm-val.csv")
+    # evaluator.save_results(scores_test, "lstm-test.csv")
 
     # evaluator.plot_predictions_train(smooth=True)
     evaluator.plot(y_test, y_pred)
