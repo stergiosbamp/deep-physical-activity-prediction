@@ -183,11 +183,11 @@ $ python ml_modeling.py
 In `src/model/dl/models/` there are the pre-trained models:
 - Multi-layer Perceptron
 - 1D Convolutional Neural Network
-- Recurrent Neural Network (2-stacked LSTM)
+- Recurrent Neural Network (LSTM)
 
 ```
 $ cd src/model/dl/
-$ python evaluate.py --cpkt_path models/{PATH_TO_PRETRAINED_MODEL} --architecture [MLP | CNN | RNN]
+$ python evaluate.py --model [MLP | CNN | RNN] --cpkt_path models/{PATH_TO_PRETRAINED_MODEL}
 ```
 
 ### From scratch training
