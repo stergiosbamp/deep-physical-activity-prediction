@@ -15,6 +15,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
+from src.model.ml.evaluator import MLEvaluator
 from src.preprocessing.dataset import DatasetBuilder
 from src.model.ml.baseline import BaselineModel
 from src.config.directory import BASE_PATH_DAILY_DATASETS, BASE_PATH_HOURLY_DATASETS
@@ -66,12 +67,12 @@ def record_performance(regressor, windows, dataset_paths, path_results):
         dataset = dataset_builder.create_dataset_all_features()
         X_train, X_test, y_train, y_test = dataset_builder.get_train_test(dataset=dataset)
 
-        baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, regressor)
-        baseline_ml.evaluator.zero_preds = False
+        baseline_ml = BaselineModel(regressor=regressor)
+        model = baseline_ml.train_model(X_train, y_train)
 
-        # record
-        baseline_ml.train_model()
-        result = baseline_ml.evaluator.evaluate_test()
+        evaluator = MLEvaluator(model)
+        y_pred = evaluator.inference(X_test)
+        result = evaluator.evaluate(y_test, y_pred)
 
         # record
         results[window] = result

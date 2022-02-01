@@ -5,6 +5,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 
 from src.model.ml.baseline import BaselineModel
+from src.model.ml.evaluator import MLEvaluator
 from src.preprocessing.dataset import DatasetBuilder
 
 
@@ -19,12 +20,13 @@ def keep_no_wear_days():
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
-    baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, gb_regressor)
-    baseline_ml.evaluator.zero_preds = False
+    baseline_ml = BaselineModel(regressor=gb_regressor)
+    model = baseline_ml.train_model(X_train, y_train)
 
-    # record
-    baseline_ml.train_model()
-    results = baseline_ml.evaluator.evaluate_test()
+    evaluator = MLEvaluator(model)
+    y_pred = evaluator.inference(X_test)
+    results = evaluator.evaluate(y_test, y_pred)
+    print(results)
 
     # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')
@@ -42,12 +44,13 @@ def drop_no_wear_days():
     dataset = ds_builder.create_dataset_all_features()
     X_train, X_test, y_train, y_test = ds_builder.get_train_test(dataset=dataset)
 
-    baseline_ml = BaselineModel(X_train, None, X_test, y_train, None, y_test, gb_regressor)
-    baseline_ml.evaluator.zero_preds = False
+    baseline_ml = BaselineModel(regressor=gb_regressor)
+    model = baseline_ml.train_model(X_train, y_train)
 
-    # record
-    baseline_ml.train_model()
-    results = baseline_ml.evaluator.evaluate_test()
+    evaluator = MLEvaluator(model)
+    y_pred = evaluator.inference(X_test)
+    results = evaluator.evaluate(y_test, y_pred)
+    print(results)
 
     # # write them to csv
     df = pd.DataFrame.from_dict(results, orient='index')

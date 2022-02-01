@@ -54,17 +54,16 @@ class MLPRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("train_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        y_hat = y_hat.reshape(-1)
         mse = self.mse(y_hat, y)
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("val_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def test_step(self, batch, batch_idx):
         x, y = batch
@@ -73,7 +72,7 @@ class MLPRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("test_loss", {"MSE": mse, "MAE": mae, "R2": r2}, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
 
 if __name__ == '__main__':
@@ -94,7 +93,7 @@ if __name__ == '__main__':
         n_features=x_train.shape[1],
         hidden_size=100,
         dropout=0.2,
-        learning_rate=0.001,
+        learning_rate=0.0001,
         num_workers=4
     )
 

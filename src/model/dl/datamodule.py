@@ -24,15 +24,20 @@ class TimeSeriesDataModule(pl.LightningDataModule):
         self.x_val = scaler.transform(self.x_val)
         self.x_test = scaler.transform(self.x_test)
 
+        target_scaler = MinMaxScaler()
+        self.y_train = target_scaler.fit_transform(self.y_train.values.reshape(-1, 1))
+        self.y_val = target_scaler.transform(self.y_val.values.reshape(-1, 1))
+        self.y_test = target_scaler.transform(self.y_test.values.reshape(-1, 1))
+
     def setup(self, stage=None):
         if stage == 'fit' or stage is None:
-            self.y_train = self.y_train.values.reshape((-1, 1))
+            return
 
         if stage == 'validate' or stage is None:
-            self.y_val = self.y_val.values.reshape((-1, 1))
+            return
 
         if stage == 'test' or stage is None:
-            self.y_test = self.y_test.values.reshape((-1, 1))
+            return
 
     def train_dataloader(self):
         train_dataset = TimeSeriesDataset(self.x_train,

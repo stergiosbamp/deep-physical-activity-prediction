@@ -1,6 +1,6 @@
 import argparse
-
 from sklearn.preprocessing import MinMaxScaler
+from pathlib import Path
 
 from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor
@@ -37,29 +37,43 @@ if __name__ == '__main__':
                                 directory='../../../data/datasets/hourly/df-3x24-just-steps.pkl')
 
     dataset = ds_builder.create_dataset_steps_features()
-    x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset=dataset)
 
-    # Scale the test set
-    scaler = MinMaxScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_val = scaler.transform(x_val)
-    x_test = scaler.transform(x_test)
+    x_train, x_val, x_test, y_train, y_val, y_test = ds_builder.get_train_val_test(dataset, val_ratio=0.2)
 
-    evaluator = DLEvaluator(x_train, x_val, x_test, y_train, y_val, y_test,
-                            model=model,
+    # scale features to get predictions
+    features_scaler = MinMaxScaler()
+    x_train = features_scaler.fit_transform(x_train)
+    x_val = features_scaler.transform(x_val)
+    x_test = features_scaler.transform(x_test)
+
+    evaluator = DLEvaluator(model=model,
                             ckpt_path=ckpt_path)
 
-    scores_train = evaluator.evaluate_train()
-    scores_val = evaluator.evaluate_val()
-    scores_test = evaluator.evaluate_test()
+    y_pred = evaluator.inference(x_test)
+    y_pred_train = evaluator.inference(x_train)
+    y_pred_val = evaluator.inference(x_val)
+
+    # fit on train to know how to invert predictions for performance recording
+    target_scaler = MinMaxScaler()
+    target_scaler.fit(y_train.values.reshape(-1, 1))
+
+    y_pred = target_scaler.inverse_transform(y_pred)
+    y_pred_train = target_scaler.inverse_transform(y_pred_train)
+    y_pred_val = target_scaler.inverse_transform(y_pred_val)
+
+    scores_test = evaluator.evaluate(y_test, y_pred)
+    scores_train = evaluator.evaluate(y_train, y_pred_train)
+    scores_val = evaluator.evaluate(y_val, y_pred_val)
 
     print("Train set scores:", scores_train)
     print("Val set scores:", scores_val)
     print("Test set scores:", scores_test)
 
-    # evaluator.save_results(scores_train, "cnn-train.csv")
-    # evaluator.save_results(scores_val, "cnn-val.csv")
-    # evaluator.save_results(scores_test, "cnn-test.csv")
+    # # Save results
+    # evaluator.results_folder = Path("../../../results/modeling")
+    # evaluator.save_results(scores_train, "lstm-train.csv")
+    # evaluator.save_results(scores_val, "lstm-val.csv")
+    # evaluator.save_results(scores_test, "lstm-test.csv")
 
     # evaluator.plot_predictions_train(smooth=True)
-    # evaluator.plot_predictions(smooth=True)
+    evaluator.plot(y_test, y_pred)

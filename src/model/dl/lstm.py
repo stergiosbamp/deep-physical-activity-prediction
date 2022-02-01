@@ -45,12 +45,11 @@ class LSTMRegressor(pl.LightningModule):
         x = x.view(len(x), 1, -1)
 
         out, _ = self.lstm(x)
-        out = out.reshape(-1, self.hidden_size)
         out = self.relu(out)
         out = self.fc(out)
 
         # reshape back to be compatible with the true values' shape
-        out = out.reshape(len(x), 1)
+        out = out.reshape(len(x), -1)
         return out
 
     def configure_optimizers(self):
@@ -63,17 +62,16 @@ class LSTMRegressor(pl.LightningModule):
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("train_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        y_hat = y_hat.reshape(-1)
         mse = self.mse(y_hat, y)
         mae = self.mae(y_hat, y)
         r2 = self.r2(y_hat, y)
         self.log("val_loss", {"MSE": mse, "MAE": mae, "R2": r2}, prog_bar=True, on_step=False, on_epoch=True)
-        return mse
+        return mae
 
     def test_step(self, batch, batch_idx):
         x, y = batch
@@ -101,10 +99,10 @@ if __name__ == '__main__':
         batch_size=64,
         max_epochs=100,
         n_features=x_train.shape[1],
-        hidden_size=100,
-        num_layers=2,
-        dropout=0.2,
-        learning_rate=0.01,
+        hidden_size=200,
+        num_layers=3,
+        dropout=0.3,
+        learning_rate=0.0001,
         num_workers=4
     )
 
