@@ -1,5 +1,5 @@
-# Physical Activity Prediction with Deep Learning
-This is the GitHub repository for the Thesis entitled "Physical Activity Prediction with Deep Learning" of MSc Data and Web Science.
+# UBIWEAR: An End-To-End Framework for Intelligent Physical Activity Prediction With Machine and Deep Learning
+This is the GitHub repository for the Thesis entitled "UBIWEAR: An End-To-End Framework for Intelligent Physical Activity Prediction With Machine and Deep Learning" of MSc Data and Web Science.
 
 :rocket: **One of our major contributions is** [UBIWEAR](./ubiwear/).
 
