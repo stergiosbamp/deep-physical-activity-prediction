@@ -1,24 +1,17 @@
 """
-Module that uses the Ridge regressor, in order to find and record the performance
-from the hourly and daily window datasets.
-
-Note that these datasets do not have outlier values removed. However by-hand experiments showed that this does not
-affect much the performance.
+Module for running the experiment about investigating the impact
+of daily vs hourly in conjunction with using 1 to 6 days before as window size.
 """
 
-import os
 import pandas as pd
 
 from sklearn.linear_model import Ridge
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler
 
 from src.model.ml.evaluator import MLEvaluator
 from src.preprocessing.dataset import DatasetBuilder
 from src.model.ml.baseline import BaselineModel
-from src.config.directory import BASE_PATH_DAILY_DATASETS, BASE_PATH_HOURLY_DATASETS
 
 
 HOURLY_WINDOWS = [

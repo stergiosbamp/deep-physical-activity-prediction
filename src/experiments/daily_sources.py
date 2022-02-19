@@ -1,8 +1,11 @@
+"""
+Module for running the experiment about investigating the impact
+of removing or keeping the daily-emitted sources that exist in our data.
+"""
+
 import pandas as pd
 
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler
 
 from src.model.ml.baseline import BaselineModel
 from src.model.ml.evaluator import MLEvaluator

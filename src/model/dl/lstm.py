@@ -1,3 +1,7 @@
+"""
+Module that trains the 3-stacked LSTM/RNN architecture model.
+"""
+
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
@@ -12,6 +16,10 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 class LSTMRegressor(pl.LightningModule):
+    """
+    The 3-stacked LSTM regression model based on PyTorch Lightning.
+    """
+
     def __init__(self, n_features, hidden_size, batch_size, num_layers, dropout, learning_rate):
         super(LSTMRegressor, self).__init__()
         self.save_hyperparameters()

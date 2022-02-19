@@ -7,6 +7,10 @@ from src.model.dl.dataset import TimeSeriesDataset
 
 
 class TimeSeriesDataModule(pl.LightningDataModule):
+    """
+    Class for time-series datamodule based on PyTorch Lightning's datamodules.
+    """
+
     def __init__(self, x_train, x_val, x_test, y_train, y_val, y_test, batch_size, num_workers=0):
         super().__init__()
         self.x_train = x_train

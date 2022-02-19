@@ -1,3 +1,8 @@
+"""
+Module for training with hyper-paramater tuning and evaluating the 3 ML models
+for the case of linear models, tree models, and boosting (ensemble) models.
+"""
+
 from sklearn.experimental import enable_hist_gradient_boosting
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.linear_model import Ridge

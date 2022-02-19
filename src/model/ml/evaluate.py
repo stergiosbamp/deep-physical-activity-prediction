@@ -1,3 +1,11 @@
+"""
+Script for evaluating the Machine Learning (pre-trained) models.
+
+Examples:
+    Evaluating using the pre-trained Ridge model
+        $ python evaluate.py --pretrained-model models/ridge.pkl
+"""
+
 import argparse
 
 from sklearn.preprocessing import MinMaxScaler
