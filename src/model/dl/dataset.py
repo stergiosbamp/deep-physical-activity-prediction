@@ -4,6 +4,10 @@ from torch.utils.data import Dataset
 
 
 class TimeSeriesDataset(Dataset):
+    """
+    Class for time-series dataset based on PyTorch
+    """
+
     def __init__(self, X, y):
         self.X = torch.tensor(X.astype(np.float32))
         self.y = torch.tensor(y.astype(np.float32))

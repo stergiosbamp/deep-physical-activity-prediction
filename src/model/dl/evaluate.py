@@ -1,6 +1,13 @@
+"""
+Script for evaluating the Deep Learning (pre-trained) models.
+
+Examples:
+    Evaluating using the pre-trained MLP model
+        $ python evaluate.py --model MLP --ckpt_path models/mlp/MLP-batch-64-epoch-100-hidden-100-dropout-0.2-lr-0.0001.ckpt
+"""
+
 import argparse
 from sklearn.preprocessing import MinMaxScaler
-from pathlib import Path
 
 from src.model.dl.lstm import LSTMRegressor
 from src.model.dl.cnn import CNNRegressor

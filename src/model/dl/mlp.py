@@ -1,3 +1,7 @@
+"""
+Module that trains the MLP architecture model.
+"""
+
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
@@ -12,6 +16,10 @@ from src.config.settings import GPU
 
 
 class MLPRegressor(pl.LightningModule):
+    """
+    The 3-layered MLP model based on PyTorch Lightning.
+    """
+
     def __init__(self, n_features, hidden_size, batch_size, dropout, learning_rate):
         super(MLPRegressor, self).__init__()
         self.save_hyperparameters()

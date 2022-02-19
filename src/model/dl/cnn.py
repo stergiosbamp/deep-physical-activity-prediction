@@ -1,3 +1,7 @@
+"""
+Module that trains the CNN architecture model.
+"""
+
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
@@ -12,6 +16,10 @@ from src.preprocessing.dataset import DatasetBuilder
 
 
 class CNNRegressor(pl.LightningModule):
+    """
+    The CNN regression model based on PyTorch Lightning.
+    """
+
     def __init__(self, n_features, out_channels, batch_size, dropout, learning_rate,
                  conv_kernel, pool_kernel):
         super(CNNRegressor, self).__init__()
