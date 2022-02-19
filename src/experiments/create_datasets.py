@@ -1,3 +1,8 @@
+"""
+Module for creating all the datasets for both hourly and daily granularity
+for a window of 1 to 6 days.
+"""
+
 from src.preprocessing.dataset import DatasetBuilder
 
 

@@ -1,3 +1,10 @@
+"""
+Module for running the experiment about investigating the impact
+of date features engineering. Specifically it evaluates the dataset
+with steps only features, the dataset with steps and date features and the
+dataset with steps values and the cyclic transformation of the date features (cyclic features).
+"""
+
 import pandas as pd
 
 from sklearn.linear_model import Ridge

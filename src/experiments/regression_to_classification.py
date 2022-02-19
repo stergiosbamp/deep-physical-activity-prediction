@@ -1,3 +1,8 @@
+"""
+Module for running the experiment about investigating the impact
+of transforming the problem in a 5-class classification problem instead of regression.
+"""
+
 import pandas as pd
 
 from sklearn.tree import DecisionTreeClassifier

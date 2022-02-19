@@ -1,8 +1,11 @@
+"""
+Module for running the experiment about investigating the impact
+of imputing zero value activity in the active hours.
+"""
+
 import pandas as pd
 
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import MinMaxScaler
 
 from src.model.ml.baseline import BaselineModel
 from src.model.ml.evaluator import MLEvaluator
