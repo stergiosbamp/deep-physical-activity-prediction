@@ -1,7 +1,8 @@
-# UBIWEAR: An End-To-End Framework for Intelligent Physical Activity Prediction With Machine and Deep Learning
-This is the GitHub repository for the Thesis entitled "UBIWEAR: An End-To-End Framework for Intelligent Physical Activity Prediction With Machine and Deep Learning" of MSc Data and Web Science.
+# UBIWEAR
 
-:rocket: **One of our major contributions is** [UBIWEAR](./ubiwear/).
+This is the GitHub repository for the paper entitled "UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions".
+
+:rocket: **One of our major contributions is the [UBIWEAR](./ubiwear/) Python library.**
 
 <p align="center">
   <img src="ubiwear/assets/logo.png" width="250" title="UBIWEAR">
