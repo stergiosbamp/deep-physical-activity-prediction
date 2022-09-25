@@ -3,7 +3,7 @@
 This is the GitHub repository for the paper entitled *UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions* published in [IEEE HealthCom 2022](https://healthcom2022.ieee-healthcom.org/).
 
 <p align="center">
-  <img src="ubiwear/assets/the-ubiwear-framework.png" width="250" title="The UBIWEAR framework">
+  <img src="ubiwear/assets/the-ubiwear-framework.png" width=300 title="The UBIWEAR framework">
 </p>
 
 :rocket: **One of our major contributions is the [UBIWEAR](./ubiwear/) Python library.**
