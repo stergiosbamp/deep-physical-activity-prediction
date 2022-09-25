@@ -1,14 +1,12 @@
-# UBIWEAR
+# UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions
 
-This is the GitHub repository for the paper entitled "UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions".
-
-:rocket: **One of our major contributions is the [UBIWEAR](./ubiwear/) Python library.**
+This is the GitHub repository for the paper entitled *UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions* published in [IEEE HealthCom 2022](https://healthcom2022.ieee-healthcom.org/).
 
 <p align="center">
-  <img src="ubiwear/assets/logo.png" width="250" title="UBIWEAR">
+  <img src="ubiwear/assets/the-ubiwear-framework.png" width=300 title="The UBIWEAR framework">
 </p>
 
-The first open-source Python library designed for data pre-processing of ubiquitous self-tracking devices.
+:rocket: **One of our major contributions is the [UBIWEAR](./ubiwear/) Python library.**
 
 ## Project setup
 
