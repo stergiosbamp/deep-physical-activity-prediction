@@ -1,6 +1,6 @@
-# UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions
+# UBIWEAR: An end-to-end, data-driven framework for intelligent physical activity prediction to empower mHealth interventions
 
-This is the GitHub repository for the paper entitled *UBIWEAR: An End-To-End, Data-Driven Framework for Intelligent Physical Activity Prediction to Empower mHealth Interventions* published in [IEEE HealthCom 2022](https://healthcom2022.ieee-healthcom.org/).
+This is the GitHub repository for the paper entitled ["UBIWEAR: An end-to-end, data-driven framework for intelligent physical activity prediction to empower mHealth interventions"](https://ieeexplore.ieee.org/document/9982730) published in [IEEE HealthCom 2022](https://healthcom2022.ieee-healthcom.org/).
 
 <p align="center">
   <img src="ubiwear/assets/the-ubiwear-framework.png" width=300 title="The UBIWEAR framework">
